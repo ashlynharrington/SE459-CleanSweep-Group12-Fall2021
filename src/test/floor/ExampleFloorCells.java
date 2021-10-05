@@ -5,7 +5,7 @@ package test.floor;
 
 import main.floor.*;
 
-public class ExampleFloorMap {
+public class ExampleFloorCells {
 
     public static void main(String[] args) {
 
