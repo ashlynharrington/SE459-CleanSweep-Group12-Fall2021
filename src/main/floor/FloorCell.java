@@ -11,6 +11,8 @@ public class FloorCell {
     private static final AtomicInteger countID = new AtomicInteger(0);
     private int id;
 
+    //variables to stoor type of floor cell, if cell has been visited
+    //if cell is the charging station, and the units of dirt in each cell
     private FloorCellType floorCellType;
     private Boolean visited;
     private Boolean isChargingStation;
@@ -31,30 +33,36 @@ public class FloorCell {
         this.id = countID.incrementAndGet();
     }
 
+    //sets pointer north of cell
     public FloorCell setNorth(FloorCell north){
         this.north = north;
         return this;
     }
-
+    //sets pointer south of cell
     public FloorCell setSouth(FloorCell south){
         this.south = south;
         return this;
     }
 
+    //sets pointer east of cell
     public FloorCell setEast(FloorCell east){
         this.east = east;
         return this;
     }
 
+    //sets pointer west of cell
     public FloorCell setWest(FloorCell west){
         this.west = west;
         return this;
     }
 
+    //sets cell to charging station
     public void setAsChargingStation(){
         isChargingStation = true;
     }
 
+    //function to return if cell is dirty
+    //if >0 units of dirt, dirty = true
     public boolean isDirty(){
         if(unitsOfDirt != 0){
             return true;
@@ -62,31 +70,43 @@ public class FloorCell {
         return false;
     }
 
+    //function to return FloorCell id
     public String getID(){
         return String.valueOf(id);
     }
 
+    //returns the cell north of current cell
     public FloorCell getNorth(){
         return north;
     }
+
+    //returns the cell south of current cell
     public FloorCell getSouth(){
         return south;
     }
+
+    //returns the cell east of current cell
     public FloorCell getEast(){
         return east;
     }
+
+    //returns the cell west of current cell
     public FloorCell getWest(){
         return west;
     }
 
+    //returns dirt in a given cell
     public int getUnitsOfDirt(){
         return unitsOfDirt;
     }
 
+    //returns the floor type of the cell
     public FloorCellType getFloorCellType(){
         return floorCellType;
     }
 
+    //returns cell variables in string format
+    //cell id, units of dirt, floor type, and whether it's a charging station
     public String toString() {
         return "FloorCell id: " + getID() +
                 "\n  unitsOfDirt: " + getUnitsOfDirt() +

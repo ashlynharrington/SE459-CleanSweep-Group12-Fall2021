@@ -14,7 +14,6 @@ public class Point {
         return String.format("(%d, %d)", x, y);
     }
 
-
     //overriding equals and hashCode allows us to search the FloorTile map with (int x, int y)
     @Override
     public boolean equals(Object obj) {

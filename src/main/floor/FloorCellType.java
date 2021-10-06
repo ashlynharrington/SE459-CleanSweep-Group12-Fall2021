@@ -3,6 +3,7 @@
 
 package main.floor;
 
+//types of cells
 public enum FloorCellType {
     BARE,
     LOWCARPET,

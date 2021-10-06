@@ -2,14 +2,15 @@ package main.tiles;
 
 public class FloorTile {
 
+    //sets variables for floor type, if tile is visited
+    //if tile is a charging station, the units of dirt on the tile, and the tile location
     private final FloorTileType type;
     private Boolean visited;
     private Boolean isChargingStation;
     private int unitsOfDirt;
     private final Point location;
 
-    //Constructors
-
+    //constructors
     public FloorTile(int x, int y, FloorTileType type, int unitsOfDirt){
         this.location = new Point(x, y);
         this.type = type;
@@ -18,6 +19,7 @@ public class FloorTile {
         this.visited = false;
     }
 
+    //keep this second constructor?
     public FloorTile(int x, int y, FloorTileType type, int unitsOfDirt, boolean isChargingStation){
         this.location = new Point(x, y);
         this.type = type;
