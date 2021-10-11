@@ -11,11 +11,11 @@ public class FloorCell {
     private static final AtomicInteger countID = new AtomicInteger(0);
     private int id;
 
-    //variables to stoor type of floor cell, if cell has been visited
+    //variables to store type of floor cell, if cell has been visited
     //if cell is the charging station, and the units of dirt in each cell
     private FloorCellType floorCellType;
-    private Boolean visited;
-    private Boolean isChargingStation;
+    private boolean visited;
+    private boolean isChargingStation;
     private int unitsOfDirt;
 
     //pointers to adjacent FloorCells
@@ -111,7 +111,7 @@ public class FloorCell {
         return "FloorCell id: " + getID() +
                 "\n  unitsOfDirt: " + getUnitsOfDirt() +
                 "\n  floorCellType: " + getFloorCellType() +
-                "\n  isChargingStation: " + isChargingStation.toString();
+                "\n  isChargingStation: " + isChargingStation;
     }
 
 }
