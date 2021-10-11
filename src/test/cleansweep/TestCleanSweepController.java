@@ -1,9 +1,13 @@
-package test.floor;
+package test.cleansweep;
 
-import main.tiles.*;
-public class ExampleFloorTiles {
+import main.cleansweep.CleanSweepController;
+import main.tiles.FloorTile;
+import main.tiles.FloorTileSet;
+import main.tiles.FloorTileType;
 
-    public static void main(String[] args) {
+public class TestCleanSweepController {
+
+    public static void testCleanSweep() {
 
         //example layout is of a 3x3 square room, 9 main.floor tiles
         //  a  b  c
@@ -36,18 +40,8 @@ public class ExampleFloorTiles {
         floorTileSet.addFloorCell(h);
         floorTileSet.addFloorCell(i);
 
-
-        System.out.println("Getting FloorTiles at Coordinates:");
-
-        System.out.println(floorTileSet.getFloorTileAt(1, 1));
-
-        System.out.println(floorTileSet.getFloorTileAt(2, 1));
-
-
-        System.out.println("Printing entire FloorMap:");
-        System.out.println(floorTileSet);
-
+        CleanSweepController controller = new CleanSweepController(floorTileSet);
+        controller.startCleaning();
 
     }
-
 }
