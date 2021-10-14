@@ -35,9 +35,9 @@
         "floor": {
             "x": "1",
             "y": "1",
+            "isChargingStation":"true",
             "floorType": "LOWCARPET",
-            "unitsOfDirt": 1,
-            "isChargingStation":"true"
+            "unitsOfDirt": 1
         }
     },
     {

@@ -10,7 +10,6 @@ import main.tiles.FloorTileType;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class FloorReader {
 
@@ -19,7 +18,6 @@ public class FloorReader {
 
         FloorTileSet floorMap = new FloorTileSet();
 
-        FloorTile [][] tiles = new FloorTile[3][3];
 
         try(FileReader reader = new FileReader("FloorPlan.json")) {
             System.out.println("File was found");
@@ -45,16 +43,18 @@ public class FloorReader {
 
                 int unitsOfDirt = floor.get("unitsOfDirt").getAsInt();
 
-                FloorTile floorTile = new FloorTile(xCoordinate,yCoordinate, FloorTileType.valueOf(floorType), unitsOfDirt);
+                if(floor.get("isChargingStation") != null) {
+                    FloorTile floorTileWithStation = new FloorTile(xCoordinate,yCoordinate, FloorTileType.valueOf(floorType), unitsOfDirt,true);
+                    floorMap.addFloorCell(floorTileWithStation);
+                } else {
 
-                tiles[xCoordinate][yCoordinate] = floorTile;
-
-                floorMap.addFloorCell(floorTile);
+                    FloorTile floorTile = new FloorTile(xCoordinate, yCoordinate, FloorTileType.valueOf(floorType), unitsOfDirt);
+                    floorMap.addFloorCell(floorTile);
+                }
 
             }
 
-            System.out.println(floorMap.getFloorTileAt(0,0));
-            System.out.println(Arrays.deepToString(tiles));
+            System.out.println(floorMap.getFloorTileAt(1,1));
 
         } catch (IOException e) {
             e.printStackTrace();

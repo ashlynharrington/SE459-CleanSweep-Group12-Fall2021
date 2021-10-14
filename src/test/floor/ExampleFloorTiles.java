@@ -60,7 +60,7 @@ public class ExampleFloorTiles {
 
          */
 
-        System.out.println("The hashmap is " + floorTileSet.getFloorTileAt(0,2));
+        System.out.println("The hashmap is " + floorTileSet.getFloorTileAt(1,1));
 
 
     }
