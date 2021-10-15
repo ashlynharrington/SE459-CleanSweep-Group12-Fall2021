@@ -30,11 +30,11 @@ public class CleanSweepStateManager implements CleanSweepStateInterface {
     }
 
     public void moveUp(){
-        decrementY();
+        incrementY();
         logState();
     }
     public void moveDown(){
-        incrementY();
+        decrementY();
         logState();
     }
     public void moveRight(){

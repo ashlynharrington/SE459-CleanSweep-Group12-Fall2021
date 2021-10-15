@@ -8,7 +8,7 @@ public class ExampleFloorTiles {
 
         /*
             example layout is of a 3x3 square room, 9 main.floor tiles
-            a (0,0)     b (0,1)      c (0,3)
+            a (0,0)     b (0,1)      c (0,2)
             d-4 (1,0)   e-(1,1)      f-6 (1,2)
             g-7 (2,0)   h-8 (2,1)    i-9 (2,2)
          */

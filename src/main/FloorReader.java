@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
+import main.cleansweep.CleanSweepController;
 import main.tiles.FloorTile;
 import main.tiles.FloorTileSet;
 import main.tiles.FloorTileType;
@@ -43,9 +44,14 @@ public class FloorReader {
 
                 int unitsOfDirt = floor.get("unitsOfDirt").getAsInt();
 
+
+
                 if(floor.get("isChargingStation") != null) {
                     FloorTile floorTileWithStation = new FloorTile(xCoordinate,yCoordinate, FloorTileType.valueOf(floorType), unitsOfDirt,true);
                     floorMap.addFloorCell(floorTileWithStation);
+                } else if (floor.get("obstacle") != null) {
+                    FloorTile floorTileWithObstacle =  new FloorTile(xCoordinate,yCoordinate,FloorTileType.valueOf(floorType),true,unitsOfDirt);
+                    floorMap.addFloorCell(floorTileWithObstacle);
                 } else {
 
                     FloorTile floorTile = new FloorTile(xCoordinate, yCoordinate, FloorTileType.valueOf(floorType), unitsOfDirt);
@@ -54,7 +60,12 @@ public class FloorReader {
 
             }
 
-            System.out.println(floorMap.getFloorTileAt(1,1));
+
+
+            CleanSweepController cleanSweepController = new CleanSweepController(floorMap);
+            cleanSweepController.startCleaning();
+
+
 
         } catch (IOException e) {
             e.printStackTrace();
