@@ -1,0 +1,75 @@
+[
+    {
+        "floor": {
+            "x": "0",
+            "y": "0",
+            "floorType": "LOWCARPET",
+            "unitsOfDirt": 2
+        }
+    },
+    {
+        "floor": {
+            "x": "0",
+            "y": "1",
+            "floorType": "LOWCARPET",
+            "unitsOfDirt": 1
+        }
+    },
+    {
+        "floor": {
+            "x": "0",
+            "y": "2",
+            "floorType": "BARE",
+            "unitsOfDirt": 0
+        }
+    },
+    {
+        "floor": {
+            "x": "1",
+            "y": "0",
+            "floorType": "LOWCARPET",
+            "unitsOfDirt": 0
+        }
+    },
+    {
+        "floor": {
+            "x": "1",
+            "y": "1",
+            "isChargingStation":"true",
+            "floorType": "LOWCARPET",
+            "unitsOfDirt": 1
+        }
+    },
+    {
+        "floor": {
+            "x": "1",
+            "y": "2",
+            "floorType": "BARE",
+            "unitsOfDirt": 1
+        }
+    },
+    {
+        "floor": {
+            "x": "2",
+            "y": "0",
+            "floorType": "HIGHCARPET",
+            "unitsOfDirt": 0
+        }
+    },
+    {
+        "floor": {
+            "x": "2",
+            "y": "1",
+            "floorType": "HIGHCARPET",
+            "unitsOfDirt": 1
+        }
+    },
+    {
+        "floor": {
+            "x": "2",
+            "y": "2",
+            "floorType": "HIGHCARPET",
+            "unitsOfDirt": 1
+        }
+    }
+]
