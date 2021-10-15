@@ -34,4 +34,9 @@ public class FloorTileSet {
     public Map<Point, FloorTile> getFloorMap() {
         return floorCells;
     }
+
+    public int getFloorMapSize() {
+        return floorCells.size();
+    }
+
 }

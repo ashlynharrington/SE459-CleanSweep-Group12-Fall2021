@@ -65,8 +65,7 @@ public class FloorReader {
             CleanSweepController cleanSweepController = new CleanSweepController(floorMap);
             cleanSweepController.startCleaning();
 
-            System.out.println(floorMap.getFloorTileAt(0,1));
-            System.out.println(floorMap.getFloorTileAt(0,2));
+
 
         } catch (IOException e) {
             e.printStackTrace();
