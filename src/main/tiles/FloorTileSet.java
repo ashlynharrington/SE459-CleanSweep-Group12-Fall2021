@@ -30,4 +30,8 @@ public class FloorTileSet {
         }
         return sb.toString();
     }
+
+    public Map<Point, FloorTile> getFloorMap() {
+        return floorCells;
+    }
 }

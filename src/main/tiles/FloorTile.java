@@ -17,6 +17,7 @@ public class FloorTile {
     private boolean isChargingStation;
     private int unitsOfDirt;
     private final Point location;
+    private boolean obstacle;
 
     //constructors
     public FloorTile(int x, int y, FloorTileType type, int unitsOfDirt){
@@ -25,6 +26,16 @@ public class FloorTile {
         this.unitsOfDirt = unitsOfDirt;
         this.isChargingStation = false;
         this.visited = false;
+        this.obstacle = false;
+    }
+
+    public FloorTile(int x, int y, FloorTileType type,boolean obstacle,int unitsOfDirt){
+        this.location = new Point(x, y);
+        this.type = type;
+        this.unitsOfDirt = unitsOfDirt;
+        this.isChargingStation = false;
+        this.visited = false;
+        this.obstacle = obstacle;
     }
 
     //keep this second constructor?
@@ -54,6 +65,14 @@ public class FloorTile {
         visited = true;
     }
 
+    public boolean isVisited() {
+        return visited;
+    }
+
+    public boolean isObstacle() {
+        return obstacle;
+    }
+
     //dirt-related ideas
     public boolean isDirty() {
         return unitsOfDirt != 0;
@@ -61,6 +80,7 @@ public class FloorTile {
 
     public void removeDirt(){
         //do something here to remove dirt?
+        this.unitsOfDirt = 0;
     }
 
     public String toString() {
@@ -69,6 +89,7 @@ public class FloorTile {
                 "\n  Type: " + getType() +
                 "\n  isChargingStation: " + isChargingStation +
                 "\n  isVisited: " + visited +
+                "\n  obstacle: " + obstacle +
                 "\n  unitsOfDirt: " + unitsOfDirt +
                 "\n";
     }
