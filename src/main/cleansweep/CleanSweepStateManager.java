@@ -1,14 +1,15 @@
 package main.cleansweep;
-import main.tiles.*;
 
 public class CleanSweepStateManager implements CleanSweepStateInterface {
     private int currentX;
     private int currentY;
+    private int currentDirt;
 
 
-    public CleanSweepStateManager(int x, int y){
+    public CleanSweepStateManager(int x, int y, int dirtCollected){
         currentX = x;
         currentY = y;
+        currentDirt = dirtCollected;
         logState();
     }
 
@@ -28,6 +29,8 @@ public class CleanSweepStateManager implements CleanSweepStateInterface {
     private void decrementX(){
         currentX-=1;
     }
+
+    private void addDirt(){ currentDirt+= 1; }
 
     public void moveUp(){
         incrementY();
@@ -57,8 +60,11 @@ public class CleanSweepStateManager implements CleanSweepStateInterface {
     }
 
     private void logState(){
+
         System.out.printf("Clean Sweep is currently on tile: (%d, %d)%n", currentX, currentY);
+        System.out.printf("Clean Sweep has currently collected %d units of dirt%n", currentDirt);
     }
 
+    public int getCurrentDirt() { return currentDirt; }
 
 }

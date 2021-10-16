@@ -10,9 +10,11 @@ public class CleanSweepController {
     private CleanSweepStateInterface cleanSweepCommands;
     FloorTileSet floorMap;
 
+    public int maxDirt = 10;
+    public int currentDirt = 0;
 
     public CleanSweepController(FloorTileSet floorPlan){
-        cleanSweepCommands = new CleanSweepStateManager(0,0);
+        cleanSweepCommands = new CleanSweepStateManager(0,0, currentDirt);
         floorMap = floorPlan;
     }
 
@@ -59,23 +61,26 @@ public class CleanSweepController {
             counter++;
         }
 
-        /*
-        for(Map.Entry<Point,FloorTile> entry:floorMap.getFloorMap().entrySet()) {
-            FloorTile floorTile = entry.getValue();
-            Point point = entry.getValue().getLocation();
-            System.out.println("Going through Point (" + point.getX() + ", " + point.getY() + ")");
-            if(floorTile.isDirty() && !isWallOrObstacle(point.getX(),point.getY()) && !floorTile.isObstacle()) {
-                    floorTile.setVisited();
-                    floorTile.removeDirt();
-                    //System.out.println("Removing dirt at (" + point.getX() + ", " + point.getY() + ")");
-            }
 
-        }
+//        for(Map.Entry<Point,FloorTile> entry:floorMap.getFloorMap().entrySet()) {
+//            FloorTile floorTile = entry.getValue();
+//            Point point = entry.getValue().getLocation();
+//            System.out.println("Going through Point (" + point.getX() + ", " + point.getY() + ")");
+//
+//            // eventually should update logic to "isClean" if floorTile.unitsOfDirt = 0 instead of "setVisited"
+//            // this will allow the vacuum to "revisit" a tile if it needs more than one pass to clean
+//            // right now just checks if the floor tile is dirty, is not an obstacle, and that the dirt isn't full
+//              if(floorTile.isDirty() && !isWallOrObstacle(point.getX(),point.getY()) && !floorTile.isObstacle() && currentDirt < maxDirt) {
+//                    floorTile.setVisited();
+//                    floorTile.removeDirt();
+//                    currentDirt+=1;
+//                    System.out.println("Removing dirt at (" + point.getX() + ", " + point.getY() + ")");
+//            }
+//
+//        }
+//
+//        System.out.println("Vacuum has started cleaning");
 
-
-        System.out.println("Vaccum has started cleaning");
-
-         */
     }
 
     //Return boolean stating if moving up one tile succeeded or failed due to obstacle or wall.
@@ -85,6 +90,7 @@ public class CleanSweepController {
             return false;
         }
         cleanSweepCommands.moveUp();
+        cleanSweepCommands.getCurrentDirt();
         return true;
     }
 
@@ -93,6 +99,7 @@ public class CleanSweepController {
             return false;
         }
         cleanSweepCommands.moveDown();
+        cleanSweepCommands.getCurrentDirt();
         return true;
     }
 
@@ -101,6 +108,7 @@ public class CleanSweepController {
             return false;
         }
         cleanSweepCommands.moveLeft();
+        cleanSweepCommands.getCurrentDirt();
         return true;
     }
     public boolean tryToMoveRight(){
@@ -108,10 +116,12 @@ public class CleanSweepController {
             return false;
         }
         cleanSweepCommands.moveRight();
+        cleanSweepCommands.getCurrentDirt();
         return true;
     }
 
     private boolean isWallOrObstacle(int x, int y) {
         return (null == floorMap.getFloorTileAt(x, y) || floorMap.getFloorTileAt(x,y).isObstacle());
     }
+
 }

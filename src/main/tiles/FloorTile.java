@@ -78,10 +78,8 @@ public class FloorTile {
         return unitsOfDirt != 0;
     }
 
-    public void removeDirt(){
-        //do something here to remove dirt?
-        this.unitsOfDirt = 0;
-    }
+    // if there are any units of dirt, decrement units of dirt and return value
+    public int removeDirt(){ if (unitsOfDirt >0) {unitsOfDirt=-1;} return unitsOfDirt; }
 
     public String toString() {
 

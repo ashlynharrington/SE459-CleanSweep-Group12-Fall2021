@@ -14,4 +14,5 @@ public interface CleanSweepStateInterface {
     void moveLeft();
     int getCurrentX();
     int getCurrentY();
+    int getCurrentDirt();
 }
