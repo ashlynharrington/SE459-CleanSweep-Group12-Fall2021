@@ -44,8 +44,6 @@ public class FloorReader {
 
                 int unitsOfDirt = floor.get("unitsOfDirt").getAsInt();
 
-
-
                 if(floor.get("isChargingStation") != null) {
                     FloorTile floorTileWithStation = new FloorTile(xCoordinate,yCoordinate, FloorTileType.valueOf(floorType), unitsOfDirt,true);
                     floorMap.addFloorCell(floorTileWithStation);
@@ -59,8 +57,6 @@ public class FloorReader {
                 }
 
             }
-
-
 
             CleanSweepController cleanSweepController = new CleanSweepController(floorMap);
             cleanSweepController.startCleaning();
