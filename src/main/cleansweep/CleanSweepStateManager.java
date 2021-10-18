@@ -54,7 +54,7 @@ public class CleanSweepStateManager implements CleanSweepStateInterface {
 
     private void logState(){
 
-        System.out.printf("Clean Sweep is currently on tile: (%d, %d)%n", currentX, currentY);
+        System.out.printf("\nClean Sweep is currently on tile: (%d, %d)%n", currentX, currentY);
         //System.out.printf("Clean Sweep has currently collected %d units of dirt%n", currentDirt);
     }
 

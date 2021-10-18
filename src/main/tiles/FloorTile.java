@@ -14,7 +14,7 @@ public class FloorTile {
 
     private final FloorTileType type;
     private boolean visited;
-    private boolean isChargingStation;
+    private boolean chargingStation;
     private int unitsOfDirt;
     private final Point location;
     private boolean obstacle;
@@ -24,7 +24,7 @@ public class FloorTile {
         this.location = new Point(x, y);
         this.type = type;
         this.unitsOfDirt = unitsOfDirt;
-        this.isChargingStation = false;
+        this.chargingStation = false;
         this.visited = false;
         this.obstacle = false;
     }
@@ -33,17 +33,17 @@ public class FloorTile {
         this.location = new Point(x, y);
         this.type = type;
         this.unitsOfDirt = unitsOfDirt;
-        this.isChargingStation = false;
+        this.chargingStation = false;
         this.visited = false;
         this.obstacle = obstacle;
     }
 
     //keep this second constructor?
-    public FloorTile(int x, int y, FloorTileType type, int unitsOfDirt, boolean isChargingStation){
+    public FloorTile(int x, int y, FloorTileType type, int unitsOfDirt, boolean chargingStation){
         this.location = new Point(x, y);
         this.type = type;
         this.unitsOfDirt = unitsOfDirt;
-        this.isChargingStation = isChargingStation;
+        this.chargingStation = chargingStation;
         this.visited = false;
     }
 
@@ -58,7 +58,7 @@ public class FloorTile {
 
     //setters
     public void setAsChargingStation(){
-        isChargingStation = true;
+        chargingStation = true;
     }
 
     public void setVisited(){
@@ -73,13 +73,15 @@ public class FloorTile {
         return obstacle;
     }
 
+    public boolean isChargingStation(){ return chargingStation; }
+
     //dirt-related ideas
     public boolean isDirty() {
         return unitsOfDirt != 0;
     }
 
     // if there are any units of dirt, decrement units of dirt and return value
-    public int removeDirt(){ if (unitsOfDirt > 0) {unitsOfDirt=-1;} return unitsOfDirt; }
+    public int removeDirt(){ if (unitsOfDirt > 0) {unitsOfDirt -= 1;} return unitsOfDirt; }
 
     public int getUnitsOfDirt() { return unitsOfDirt; };
 
@@ -87,7 +89,7 @@ public class FloorTile {
 
         return "FloorTile at Location: " + getLocation() +
                 "\n  Type: " + getType() +
-                "\n  isChargingStation: " + isChargingStation +
+                "\n  isChargingStation: " + chargingStation +
                 "\n  isVisited: " + visited +
                 "\n  obstacle: " + obstacle +
                 "\n  unitsOfDirt: " + unitsOfDirt +

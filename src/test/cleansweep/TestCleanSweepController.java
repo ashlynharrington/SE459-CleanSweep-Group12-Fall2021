@@ -41,7 +41,7 @@ public class TestCleanSweepController {
         floorTileSet.addFloorCell(i);
 
         CleanSweepController controller = new CleanSweepController(floorTileSet);
-        controller.startCleaning();
+        controller.startCleaningCycle();
 
     }
 }

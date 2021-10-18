@@ -59,7 +59,7 @@ public class FloorReader {
             }
 
             CleanSweepController cleanSweepController = new CleanSweepController(floorMap);
-            cleanSweepController.startCleaning();
+            cleanSweepController.startCleaningCycle();
 
 
 
