@@ -1,5 +1,7 @@
 package main.cleansweep;
 
+import main.pathfinding.Path;
+import main.pathfinding.PathFinder;
 import main.tiles.FloorTileSet;
 import main.tiles.FloorTile;
 import main.tiles.FloorTileType;
@@ -8,6 +10,7 @@ import main.tiles.Point;
 import java.util.*;
 
 public class CleanSweepController {
+    Path heuristic = null;
     private static final int MAX_BATTERY_CAPACITY = 100;
     private static final int MAX_DIRT_CAPACITY = 100;
 
@@ -21,14 +24,14 @@ public class CleanSweepController {
     public int currentVacuumDirt = 0;
     private double unitsOfCharge = 20.0;
 
-    public CleanSweepController(FloorTileSet floorPlan){
-        cleanSweepCommands = new CleanSweepStateManager(1,1);
+    public CleanSweepController(FloorTileSet floorPlan) {
+        cleanSweepCommands = new CleanSweepStateManager(1, 1);
         floorMap = floorPlan;
         sensedUnvisitedPoints = new HashSet<>();
     }
 
 
-    private ArrayList<Point> senseAdjacentTiles(){
+    private ArrayList<Point> senseAdjacentTiles() {
         ArrayList<Point> potentialMoves = new ArrayList<>();
 
         int currentY = cleanSweepCommands.getCurrentY();
@@ -41,32 +44,32 @@ public class CleanSweepController {
 
         //potential moves are any adjacent tiles that are not obstacles or not null
         //If a tile is visited the CleanSweep could still move there
-        if(!isWallOrObstacle(up)) potentialMoves.add(up);
-        if(!isWallOrObstacle(down)) potentialMoves.add(down);
-        if(!isWallOrObstacle(right)) potentialMoves.add(right);
-        if(!isWallOrObstacle(left)) potentialMoves.add(left);
+        if (!isWallOrObstacle(up)) potentialMoves.add(up);
+        if (!isWallOrObstacle(down)) potentialMoves.add(down);
+        if (!isWallOrObstacle(right)) potentialMoves.add(right);
+        if (!isWallOrObstacle(left)) potentialMoves.add(left);
 
         //Of all potential moves, save the unvisited tiles
         potentialMoves.forEach(p -> {
-            if(!isVisited(p)) sensedUnvisitedPoints.add(p);
+            if (!isVisited(p)) sensedUnvisitedPoints.add(p);
         });
 
         System.out.println("   Potential Moves: " + potentialMoves);
         return potentialMoves;
     }
 
-    private Point pickPointToMoveTo(ArrayList<main.tiles.Point> potentialMoves){
+    private Point pickPointToMoveTo(ArrayList<main.tiles.Point> potentialMoves) {
         Point move = null;
 
         //if only one move is available, move there
-        if(potentialMoves.size() == 1){
+        if (potentialMoves.size() == 1) {
             move = potentialMoves.get(0);
             return move;
         }
 
         //try to move to an unvisited tile first
-        for (Point p : potentialMoves){
-            if(!floorMap.getFloorTileAt(p).isVisited()){
+        for (Point p : potentialMoves) {
+            if (!floorMap.getFloorTileAt(p).isVisited()) {
                 move = new Point(p.getX(), p.getY());
                 break;
             }
@@ -76,28 +79,34 @@ public class CleanSweepController {
 
         //if no unvisited tiles to move to, try to go toward an unvisited tile
         //do not go back to the previous tile
-        if(move == null){
+        if (move == null) {
             Point mostRecentUnvisitedPointSeen = potentialMoves.get(potentialMoves.size() - 1);
             double shortestDistance = mostRecentUnvisitedPointSeen.distanceToPoint(new Point(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY()));
 
-            for (Point p : potentialMoves){
-                if(p.distanceToPoint(mostRecentUnvisitedPointSeen) < shortestDistance) {
+            for (Point p : potentialMoves) {
+                if (p.distanceToPoint(mostRecentUnvisitedPointSeen) < shortestDistance) {
                     move = p;
                 }
             }
         }
 
         //Need to address if obstacle between CleanSweep and unvisited tile
-        if(move == null){
-
+        if (move == null) {
+            Point mostRecentUnvisitedPointSeen = potentialMoves.get(potentialMoves.size() - 1);
+            PathFinder pf = new PathFinder(
+                    new Point(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY()),
+                    mostRecentUnvisitedPointSeen,
+                    floorMap);
+            heuristic = pf.findPath();
+            move = heuristic.getNextMove();
         }
 
         return move;
     }
 
-    private void removePointFromUnvisitedList(Point p){
-        for (Point point : sensedUnvisitedPoints){
-            if(point.equals(p)){
+    private void removePointFromUnvisitedList(Point p) {
+        for (Point point : sensedUnvisitedPoints) {
+            if (point.equals(p)) {
                 sensedUnvisitedPoints.remove(point);
                 System.out.println("   Removed Point from unvisited list: " + point.toString());
                 break;
@@ -106,7 +115,7 @@ public class CleanSweepController {
     }
 
 
-    private boolean tryToMove(){
+    private boolean tryToMove() {
         //first the CleanSweep looks around at adjacent tiles for potential moves
         ArrayList<main.tiles.Point> potentialMoves = senseAdjacentTiles();
 
@@ -119,12 +128,12 @@ public class CleanSweepController {
         //
         Point nextMove = pickPointToMoveTo(potentialMoves);
 
-        FloorTileType currentFloorTileType =  getCurrentFloorTile().getType();
-        FloorTileType nextFloorTileType =  floorMap.getFloorTileAt(nextMove).getType();
+        FloorTileType currentFloorTileType = getCurrentFloorTile().getType();
+        FloorTileType nextFloorTileType = floorMap.getFloorTileAt(nextMove).getType();
 
         //if not enough battery left, move operation fails, battery dead
-        if(reduceChargeOnMove(currentFloorTileType, nextFloorTileType)){
-            if(cleanSweepCommands.move(nextMove)){
+        if (reduceChargeOnMove(currentFloorTileType, nextFloorTileType)) {
+            if (cleanSweepCommands.move(nextMove)) {
                 floorMap.getFloorTileAt(nextMove).setVisited();
                 removePointFromUnvisitedList(nextMove);
 
@@ -135,7 +144,7 @@ public class CleanSweepController {
     }
 
 
-    public void startCleaningCycle(){
+    public void startCleaningCycle() {
         // point -> (0,1)
 
         /*
@@ -148,9 +157,9 @@ public class CleanSweepController {
         //check battery level at start of cycle
         tryToChargeBattery();
 
-        while(checkBattery() && (getCurrentVacuumDirt() < MAX_DIRT_CAPACITY)) {
+        while (checkBattery() && (getCurrentVacuumDirt() < MAX_DIRT_CAPACITY)) {
 
-            if(tryToMove()) {
+            if (tryToMove()) {
                 tryToClean();
             } else {
                 break;
@@ -163,9 +172,9 @@ public class CleanSweepController {
 //            Point point = entry.getValue().getLocation();
 //            System.out.println("Going through Point (" + point.getX() + ", " + point.getY() + ")");
 
-            // eventually should update logic to "isClean" if floorTile.unitsOfDirt = 0 instead of "setVisited"
-            // this will allow the vacuum to "revisit" a tile if it needs more than one pass to clean
-            // right now just checks if the floor tile is dirty, is not an obstacle, and that the dirt isn't full
+        // eventually should update logic to "isClean" if floorTile.unitsOfDirt = 0 instead of "setVisited"
+        // this will allow the vacuum to "revisit" a tile if it needs more than one pass to clean
+        // right now just checks if the floor tile is dirty, is not an obstacle, and that the dirt isn't full
 //              if(floorTile.isDirty() && !isWallOrObstacle(point.getX(),point.getY()) && !floorTile.isObstacle() && currentDirt < maxDirt) {
 //                    floorTile.setVisited();
 //                    floorTile.removeDirt();
@@ -182,19 +191,19 @@ public class CleanSweepController {
 
     //Return boolean stating if moving up one tile succeeded or failed due to obstacle or wall.
 
-    public boolean tryToMoveUp(){
-        if(!checkBattery()){
+    public boolean tryToMoveUp() {
+        if (!checkBattery()) {
             return false;
         }
 
-        if(isWallOrObstacle(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY()+1)) {
+        if (isWallOrObstacle(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY() + 1)) {
             return false;
         }
-        FloorTileType currentFloorTileType =  getCurrentFloorTile().getType();
-        FloorTileType nextFloorTileType =  floorMap.getFloorTileAt(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY() + 1).getType();
+        FloorTileType currentFloorTileType = getCurrentFloorTile().getType();
+        FloorTileType nextFloorTileType = floorMap.getFloorTileAt(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY() + 1).getType();
 
         //if not enough battery left, operation fails, battery dead
-        if(!reduceChargeOnMove(currentFloorTileType, nextFloorTileType)){
+        if (!reduceChargeOnMove(currentFloorTileType, nextFloorTileType)) {
             return false;
         }
 
@@ -204,19 +213,19 @@ public class CleanSweepController {
         return true;
     }
 
-    public boolean tryToMoveDown(){
-        if(!checkBattery()){
+    public boolean tryToMoveDown() {
+        if (!checkBattery()) {
             return false;
         }
 
-        if(isWallOrObstacle(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY()-1)){
+        if (isWallOrObstacle(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY() - 1)) {
             return false;
         }
         FloorTileType currentFloorTileType = getCurrentFloorTile().getType();
-        FloorTileType nextFloorTileType =  floorMap.getFloorTileAt(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY() - 1).getType();
+        FloorTileType nextFloorTileType = floorMap.getFloorTileAt(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY() - 1).getType();
 
         //if not enough battery left, operation fails, battery dead
-        if(!reduceChargeOnMove(currentFloorTileType, nextFloorTileType)){
+        if (!reduceChargeOnMove(currentFloorTileType, nextFloorTileType)) {
             return false;
         }
 
@@ -226,19 +235,19 @@ public class CleanSweepController {
         return true;
     }
 
-    public boolean tryToMoveLeft(){
-        if(!checkBattery()){
+    public boolean tryToMoveLeft() {
+        if (!checkBattery()) {
             return false;
         }
 
-        if(isWallOrObstacle(cleanSweepCommands.getCurrentX()-1, cleanSweepCommands.getCurrentY())){
+        if (isWallOrObstacle(cleanSweepCommands.getCurrentX() - 1, cleanSweepCommands.getCurrentY())) {
             return false;
         }
-        FloorTileType currentFloorTileType =  getCurrentFloorTile().getType();
-        FloorTileType nextFloorTileType =  floorMap.getFloorTileAt(cleanSweepCommands.getCurrentX() - 1, cleanSweepCommands.getCurrentY()).getType();
+        FloorTileType currentFloorTileType = getCurrentFloorTile().getType();
+        FloorTileType nextFloorTileType = floorMap.getFloorTileAt(cleanSweepCommands.getCurrentX() - 1, cleanSweepCommands.getCurrentY()).getType();
 
         //if not enough battery left, operation fails, battery dead
-        if(!reduceChargeOnMove(currentFloorTileType, nextFloorTileType)){
+        if (!reduceChargeOnMove(currentFloorTileType, nextFloorTileType)) {
             return false;
         }
 
@@ -247,18 +256,19 @@ public class CleanSweepController {
 
         return true;
     }
-    public boolean tryToMoveRight(){
-        if(!checkBattery()){
+
+    public boolean tryToMoveRight() {
+        if (!checkBattery()) {
             return false;
         }
 
-        if(isWallOrObstacle(cleanSweepCommands.getCurrentX()+1, cleanSweepCommands.getCurrentY())){
+        if (isWallOrObstacle(cleanSweepCommands.getCurrentX() + 1, cleanSweepCommands.getCurrentY())) {
             return false;
         }
-        FloorTileType currentFloorTileType =  getCurrentFloorTile().getType();
-        FloorTileType nextFloorTileType =  floorMap.getFloorTileAt(cleanSweepCommands.getCurrentX() + 1, cleanSweepCommands.getCurrentY()).getType();
+        FloorTileType currentFloorTileType = getCurrentFloorTile().getType();
+        FloorTileType nextFloorTileType = floorMap.getFloorTileAt(cleanSweepCommands.getCurrentX() + 1, cleanSweepCommands.getCurrentY()).getType();
 
-        if(!reduceChargeOnMove(currentFloorTileType, nextFloorTileType)){
+        if (!reduceChargeOnMove(currentFloorTileType, nextFloorTileType)) {
             return false;
         }
 
@@ -269,7 +279,7 @@ public class CleanSweepController {
     }
 
     private boolean isWallOrObstacle(int x, int y) {
-        return (null == floorMap.getFloorTileAt(x, y) || floorMap.getFloorTileAt(x,y).isObstacle());
+        return (null == floorMap.getFloorTileAt(x, y) || floorMap.getFloorTileAt(x, y).isObstacle());
 
     }
 
@@ -281,11 +291,11 @@ public class CleanSweepController {
         return (null != floorMap.getFloorTileAt(p) && floorMap.getFloorTileAt(p).isVisited());
     }
 
-    private boolean reduceChargeOnClean(FloorTileType floorTileType){
+    private boolean reduceChargeOnClean(FloorTileType floorTileType) {
         unitsOfCharge -= floorTileType.getValue();
         System.out.println("   Reduced charge from cleaning " + floorTileType + ": -" + floorTileType.getValue());
         System.out.println("   Current battery level: " + getCurrentBatteryLevel());
-        if(getCurrentBatteryLevel() > 0){
+        if (getCurrentBatteryLevel() > 0) {
             return true;
         } else {
             System.out.println("\nBattery dead");
@@ -293,12 +303,12 @@ public class CleanSweepController {
         }
     }
 
-    private boolean reduceChargeOnMove(FloorTileType currentTile, FloorTileType nextTile){
-        double batteryCostToMove = (double)(currentTile.getValue() + nextTile.getValue())/2;
+    private boolean reduceChargeOnMove(FloorTileType currentTile, FloorTileType nextTile) {
+        double batteryCostToMove = (double) (currentTile.getValue() + nextTile.getValue()) / 2;
         unitsOfCharge -= batteryCostToMove;
-        System.out.println("   Reduced charge from moving from " + currentTile + " to " +nextTile + " -" + batteryCostToMove);
+        System.out.println("   Reduced charge from moving from " + currentTile + " to " + nextTile + " -" + batteryCostToMove);
         System.out.println("   Current battery level: " + getCurrentBatteryLevel());
-        if(getCurrentBatteryLevel() > 0){
+        if (getCurrentBatteryLevel() > 0) {
             return true;
         } else {
             System.out.println("\nBattery dead");
@@ -306,64 +316,67 @@ public class CleanSweepController {
         }
     }
 
-    public void tryToChargeBattery(){
-        if(getCurrentFloorTile().isChargingStation()){
+    public void tryToChargeBattery() {
+        if (getCurrentFloorTile().isChargingStation()) {
             unitsOfCharge = MAX_BATTERY_CAPACITY;
         }
         System.out.println("   Charged battery to: " + getCurrentBatteryLevel());
     }
 
-    public boolean checkBattery(){
+    public boolean checkBattery() {
         return (unitsOfCharge > 0);
     }
 
-    public double getCurrentBatteryLevel(){
+    public double getCurrentBatteryLevel() {
         return unitsOfCharge;
     }
 
-    public int getCurrentVacuumDirt(){
+    public int getCurrentVacuumDirt() {
         return currentVacuumDirt;
     }
 
-    public FloorTile getCurrentFloorTile(){
+    public FloorTile getCurrentFloorTile() {
         return floorMap.getFloorTileAt(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY());
     }
 
     private boolean tryToClean() {
-        if(!checkBattery()){
+        if (!checkBattery()) {
             return false;
         }
 
         FloorTile floorTile = getCurrentFloorTile();
 
         // if current dirt is less than max dirt and the tile is dirty, remove dirt
-        if(currentVacuumDirt < MAX_DIRT_CAPACITY && floorTile.isDirty()) {
+        if (currentVacuumDirt < MAX_DIRT_CAPACITY && floorTile.isDirty()) {
             floorTile.removeDirt();
-            currentVacuumDirt+=1;
+            currentVacuumDirt += 1;
             System.out.println("   Tile dirty, dirt added.");
             System.out.println("   Current vacuum dirt level: " + currentVacuumDirt);
 
             //if we are able to clean, battery charge will be reduced based on flooring type
             //if not enough battery left, operation fails, battery dead
-            if(!reduceChargeOnClean(floorTile.getType())){
+            if (!reduceChargeOnClean(floorTile.getType())) {
                 return false;
             }
 
             return true;
         }
         // if current dirt is less than max dirt and the tile is not dirty, do not remove dirt
-        else if(currentVacuumDirt < MAX_DIRT_CAPACITY && !floorTile.isDirty()) {
+        else if (currentVacuumDirt < MAX_DIRT_CAPACITY && !floorTile.isDirty()) {
             System.out.println("   Tile not dirty, no dirt added.");
             System.out.println("   Current vacuum dirt level: " + currentVacuumDirt);
             return false;
         }
         // if current dirt is more than max dirt do not remove dirt
-        else if(currentVacuumDirt >= MAX_DIRT_CAPACITY) {
+        else if (currentVacuumDirt >= MAX_DIRT_CAPACITY) {
             System.out.println("   Current vacuum dirt level: " + currentVacuumDirt);
             System.out.println("   Vacuum full. No longer cleaning.");
             return false;
-        };
+        }
+        ;
         return true;
-    };
+    }
+
+    ;
 
 }
