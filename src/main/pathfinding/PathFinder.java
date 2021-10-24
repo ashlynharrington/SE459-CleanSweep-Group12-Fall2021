@@ -37,7 +37,7 @@ public class PathFinder {
     public Node explore(){
         Node bestNode =  nodes.poll();
         if(isEnd(bestNode)){
-            bestNode.printPath();
+            
             return bestNode;
         }else {
             exploreLeft(bestNode);
