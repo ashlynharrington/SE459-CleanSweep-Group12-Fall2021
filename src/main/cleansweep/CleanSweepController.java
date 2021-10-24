@@ -101,6 +101,7 @@ public class CleanSweepController {
                     mostRecentUnvisitedPointSeen,
                     floorMap);
             heuristic = pf.findPath();
+            heuristic.printPath();
             move = heuristic.getNextMove();
         }
 
