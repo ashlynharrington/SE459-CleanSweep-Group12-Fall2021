@@ -79,6 +79,8 @@ public class CleanSweepController {
 
         //if no unvisited tiles to move to, try to go toward an unvisited tile
         //do not go back to the previous tile
+
+        /**
         if (move == null) {
             Point mostRecentUnvisitedPointSeen = potentialMoves.get(potentialMoves.size() - 1);
             double shortestDistance = mostRecentUnvisitedPointSeen.distanceToPoint(new Point(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY()));
@@ -89,6 +91,7 @@ public class CleanSweepController {
                 }
             }
         }
+         */
 
         //Need to address if obstacle between CleanSweep and unvisited tile
         if (move == null) {
