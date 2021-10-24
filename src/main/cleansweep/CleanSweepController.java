@@ -3,13 +3,20 @@ package main.cleansweep;
 import main.tiles.FloorTileSet;
 import main.tiles.FloorTile;
 import main.tiles.FloorTileType;
+import main.tiles.Point;
+
+import java.util.*;
 
 public class CleanSweepController {
-    private static final int MAX_BATTERY_CAPACITY = 30;
-    private static final int MAX_DIRT_CAPACITY = 10;
+    private static final int MAX_BATTERY_CAPACITY = 100;
+    private static final int MAX_DIRT_CAPACITY = 100;
 
     private CleanSweepStateInterface cleanSweepCommands;
     FloorTileSet floorMap;
+
+    //list to hold coordinates when CleanSweep observes tiles around it
+    //coordinates of unvisited tiles are saved at the point the CleanSweep "sees" them
+    private final Set<Point> sensedUnvisitedPoints;
 
     public int currentVacuumDirt = 0;
     private double unitsOfCharge = 20.0;
@@ -17,17 +24,116 @@ public class CleanSweepController {
     public CleanSweepController(FloorTileSet floorPlan){
         cleanSweepCommands = new CleanSweepStateManager(1,1);
         floorMap = floorPlan;
+        sensedUnvisitedPoints = new HashSet<>();
     }
 
-       /*
-            example layout is of a 3x3 square room, 9 main.floor tiles
 
-            Up -> increment y
-            Down -> decrement y
-            Right -> increment x
-            Left -> decrement x
+    private ArrayList<Point> senseAdjacentTiles(){
+        ArrayList<Point> potentialMoves = new ArrayList<>();
 
-         */
+        int currentY = cleanSweepCommands.getCurrentY();
+        int currentX = cleanSweepCommands.getCurrentX();
+
+        Point up = new Point(currentX, currentY + 1);
+        Point down = new Point(currentX, currentY - 1);
+        Point right = new Point(currentX + 1, currentY);
+        Point left = new Point(currentX - 1, currentY);
+
+        //potential moves are any adjacent tiles that are not obstacles or not null
+        //If a tile is visited the CleanSweep could still move there
+        if(!isWallOrObstacle(up)) potentialMoves.add(up);
+        if(!isWallOrObstacle(down)) potentialMoves.add(down);
+        if(!isWallOrObstacle(right)) potentialMoves.add(right);
+        if(!isWallOrObstacle(left)) potentialMoves.add(left);
+
+        //Of all potential moves, save the unvisited tiles
+        potentialMoves.forEach(p -> {
+            if(!isVisited(p)) sensedUnvisitedPoints.add(p);
+        });
+
+        System.out.println("   Potential Moves: " + potentialMoves);
+        return potentialMoves;
+    }
+
+    private Point pickPointToMoveTo(ArrayList<main.tiles.Point> potentialMoves){
+        Point move = null;
+
+        //if only one move is available, move there
+        if(potentialMoves.size() == 1){
+            move = potentialMoves.get(0);
+            return move;
+        }
+
+        //try to move to an unvisited tile first
+        for (Point p : potentialMoves){
+            if(!floorMap.getFloorTileAt(p).isVisited()){
+                move = new Point(p.getX(), p.getY());
+                break;
+            }
+        }
+
+        System.out.println("   Sensed Unvisited Tiles List: " + sensedUnvisitedPoints.toString());
+
+        //if no unvisited tiles to move to, try to go toward an unvisited tile
+        //do not go back to the previous tile
+        if(move == null){
+            Point mostRecentUnvisitedPointSeen = potentialMoves.get(potentialMoves.size() - 1);
+            double shortestDistance = mostRecentUnvisitedPointSeen.distanceToPoint(new Point(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY()));
+
+            for (Point p : potentialMoves){
+                if(p.distanceToPoint(mostRecentUnvisitedPointSeen) < shortestDistance) {
+                    move = p;
+                }
+            }
+        }
+
+        //Need to address if obstacle between CleanSweep and unvisited tile
+        if(move == null){
+
+        }
+
+        return move;
+    }
+
+    private void removePointFromUnvisitedList(Point p){
+        for (Point point : sensedUnvisitedPoints){
+            if(point.equals(p)){
+                sensedUnvisitedPoints.remove(point);
+                System.out.println("   Removed Point from unvisited list: " + point.toString());
+                break;
+            }
+        }
+    }
+
+
+    private boolean tryToMove(){
+        //first the CleanSweep looks around at adjacent tiles for potential moves
+        ArrayList<main.tiles.Point> potentialMoves = senseAdjacentTiles();
+
+        //if no potential moves, CleanSweep is stuck
+        if (potentialMoves.size() == 0) {
+            System.out.println("\nCleanSweep is stuck, cannot move");
+            return false;
+        }
+
+        //
+        Point nextMove = pickPointToMoveTo(potentialMoves);
+
+        FloorTileType currentFloorTileType =  getCurrentFloorTile().getType();
+        FloorTileType nextFloorTileType =  floorMap.getFloorTileAt(nextMove).getType();
+
+        //if not enough battery left, move operation fails, battery dead
+        if(reduceChargeOnMove(currentFloorTileType, nextFloorTileType)){
+            if(cleanSweepCommands.move(nextMove)){
+                floorMap.getFloorTileAt(nextMove).setVisited();
+                removePointFromUnvisitedList(nextMove);
+
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public void startCleaningCycle(){
         // point -> (0,1)
@@ -44,23 +150,11 @@ public class CleanSweepController {
 
         while(checkBattery() && (getCurrentVacuumDirt() < MAX_DIRT_CAPACITY)) {
 
-
-            while(tryToMoveRight()) {
+            if(tryToMove()) {
                 tryToClean();
+            } else {
+                break;
             }
-
-            while(tryToMoveUp()) {
-                tryToClean();
-            }
-
-            while (tryToMoveLeft()) {
-                tryToClean();
-            }
-
-            while(tryToMoveDown()) {
-                tryToClean();
-            }
-
 
         }
 
@@ -177,6 +271,14 @@ public class CleanSweepController {
     private boolean isWallOrObstacle(int x, int y) {
         return (null == floorMap.getFloorTileAt(x, y) || floorMap.getFloorTileAt(x,y).isObstacle());
 
+    }
+
+    private boolean isWallOrObstacle(Point p) {
+        return (null == floorMap.getFloorTileAt(p) || floorMap.getFloorTileAt(p).isObstacle());
+    }
+
+    private boolean isVisited(Point p) {
+        return (null != floorMap.getFloorTileAt(p) && floorMap.getFloorTileAt(p).isVisited());
     }
 
     private boolean reduceChargeOnClean(FloorTileType floorTileType){

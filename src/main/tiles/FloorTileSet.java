@@ -13,6 +13,9 @@ public class FloorTileSet {
     public FloorTile getFloorTileAt(int x, int y){
         return floorCells.get(new Point(x, y));
     }
+    public FloorTile getFloorTileAt(Point p){
+        return floorCells.get(p);
+    }
 
     public void addFloorCell(FloorTile floorCell){
         floorCells.put(floorCell.getLocation(), floorCell);

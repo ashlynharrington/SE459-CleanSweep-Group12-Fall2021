@@ -1,8 +1,13 @@
 package main.cleansweep;
 
+import main.tiles.Point;
+
 public class CleanSweepStateManager implements CleanSweepStateInterface {
     private int currentX;
     private int currentY;
+    private int lastX;
+    private int lastY;
+
     public CleanSweepStateManager(int x, int y){
         currentX = x;
         currentY = y;
@@ -25,6 +30,25 @@ public class CleanSweepStateManager implements CleanSweepStateInterface {
         currentX-=1;
     }
 
+    public boolean move(Point p){
+        int dx = Math.abs(Math.abs(currentX) - Math.abs(p.getX()));
+        int dy = Math.abs(Math.abs(currentY) - Math.abs(p.getY()));
+
+        if(dx == 1 && dy == 0){
+            lastX = currentX;
+            currentX = p.getX();
+            logState();
+            return true;
+        } else if (dx == 0 && dy == 1){
+            lastY = currentY;
+            currentY = p.getY();
+            logState();
+            return true;
+        } else {
+            return false;
+        }
+
+    }
     public void moveUp(){
         incrementY();
         logState();
