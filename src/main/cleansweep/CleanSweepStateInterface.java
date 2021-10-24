@@ -1,5 +1,9 @@
 package main.cleansweep;
 
+import main.tiles.Point;
+
+import java.text.ParsePosition;
+
 /**
  * Interface meant to make sure that the way the Clean Sweep maintains state can change without
  * automatically breaking anything else.
@@ -8,6 +12,7 @@ package main.cleansweep;
 //Also meant to document all the current ways that the Clean Sweep state can change.
 
 public interface CleanSweepStateInterface {
+    boolean move(Point point);
     void moveUp();
     void moveDown();
     void moveRight();
