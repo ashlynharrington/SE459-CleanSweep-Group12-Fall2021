@@ -95,14 +95,23 @@ public class CleanSweepController {
 
         //Need to address if obstacle between CleanSweep and unvisited tile
         if (move == null) {
-            Point mostRecentUnvisitedPointSeen = potentialMoves.get(potentialMoves.size() - 1);
+            Point sensedButUnvisitedPoint = null;
+            Object[] arrayOfUnvisited = sensedUnvisitedPoints.toArray();
+            if(arrayOfUnvisited.length == 0){
+                System.out.println("Visited everywhere");
+                move = new Point(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY());
+            }else {
+               sensedButUnvisitedPoint  = (Point)arrayOfUnvisited[0];
+            }
             PathFinder pf = new PathFinder(
                     new Point(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY()),
-                    mostRecentUnvisitedPointSeen,
+                    sensedButUnvisitedPoint,
                     floorMap);
             heuristic = pf.findPath();
-            heuristic.printPath();
-            move = heuristic.getNextMove();
+            if(heuristic!= null) {
+                heuristic.printPath();
+                move = heuristic.getNextMove();
+            }
         }
 
         return move;

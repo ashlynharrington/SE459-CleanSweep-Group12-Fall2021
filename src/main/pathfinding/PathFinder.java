@@ -25,6 +25,9 @@ public class PathFinder {
     }
 
     public Path findPath(){
+        if(null == end){
+            return null;
+        }
         while(!nodes.isEmpty()){
             Node exploredNode = explore();
             if(null!=exploredNode){
@@ -37,7 +40,7 @@ public class PathFinder {
     public Node explore(){
         Node bestNode =  nodes.poll();
         if(isEnd(bestNode)){
-            
+
             return bestNode;
         }else {
             exploreLeft(bestNode);
@@ -87,7 +90,7 @@ public class PathFinder {
     }
 
     private void addNode(int x, int y, Node bestNode){
-        if(null != floor.getFloorTileAt(x,y) && !finished(x,y)){
+        if(null != floor.getFloorTileAt(x,y) && (!floor.getFloorTileAt(x,y).isObstacle()) && (!finished(x,y))){
             Node neighborNode;
             neighborNode = new Node(new Point(x,y),bestNode);
             if(isOptimal(neighborNode)) {

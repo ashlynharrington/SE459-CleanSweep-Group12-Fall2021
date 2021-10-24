@@ -7,7 +7,7 @@ public class Path {
     Node iterator;
 
     public Path(Node exploredNode) {
-        startingPoint = exploredNode.reverse();
+        startingPoint = exploredNode.reverse().parent;
         iterator = startingPoint;
     }
     public void printPath(){
