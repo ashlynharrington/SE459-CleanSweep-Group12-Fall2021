@@ -13,6 +13,7 @@ public class CleanSweepController {
     Path heuristic = null;
     private static final int MAX_BATTERY_CAPACITY = 100;
     private static final int MAX_DIRT_CAPACITY = 100;
+    private static final double LOW_BATTERY_THRESHOLD = 30;
 
     private CleanSweepStateInterface cleanSweepCommands;
     FloorTileSet floorMap;
@@ -60,6 +61,23 @@ public class CleanSweepController {
 
     private Point pickPointToMoveTo(ArrayList<main.tiles.Point> potentialMoves) {
         Point move = null;
+
+        if(isLowBattery()){
+            Point chargingStation = getChargingStation();
+            if(null == chargingStation){
+                //Should not happen if there is a charging station
+                System.out.println("Could not find a charging station.  Run until battery dead.");
+            }else{
+                PathFinder chargePathFinder = new PathFinder(
+                        new Point(cleanSweepCommands.getCurrentX(),cleanSweepCommands.getCurrentY()),
+                        chargingStation,
+                        floorMap
+                );
+                Path chargePath = chargePathFinder.findPath();
+                chargePath.printPath();
+                return chargePath.getNextMove();
+            }
+        }
 
         //if only one move is available, move there
         if (potentialMoves.size() == 1) {
@@ -390,6 +408,21 @@ public class CleanSweepController {
         return true;
     }
 
-    ;
+    private Point getChargingStation(){
+        return randomChargingStation();
+    }
+    private Point randomChargingStation(){
+        Set<Point> pointsToScan = floorMap.getFloorMap().keySet();
+        for(Point p: pointsToScan){
+            if(floorMap.getFloorTileAt(p).isChargingStation()){
+                return p;
+            }
+        }
+        return null;
+    }
+
+    private boolean isLowBattery(){
+        return unitsOfCharge<=LOW_BATTERY_THRESHOLD;
+    }
 
 }
