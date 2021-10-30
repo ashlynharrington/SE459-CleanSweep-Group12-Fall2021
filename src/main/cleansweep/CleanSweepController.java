@@ -63,6 +63,7 @@ public class CleanSweepController {
         Point move = null;
 
         if(isLowBattery()){
+
             Point currentPoint = new Point(cleanSweepCommands.getCurrentX(),cleanSweepCommands.getCurrentY());
             Point chargingStation = getChargingStation();
 
@@ -85,6 +86,7 @@ public class CleanSweepController {
                     chargePath.printPath();
                     return chargePath.getNextMove();
                 }
+
             }
         }
 
