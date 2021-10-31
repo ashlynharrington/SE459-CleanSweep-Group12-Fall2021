@@ -173,7 +173,8 @@ public class CleanSweepController {
         while (checkBattery() && (getCurrentVacuumDirt() < MAX_DIRT_CAPACITY)) {
 
             if (tryToMove()) {
-                tryToClean();
+                //tryToClean();
+                cleanTiles();
             } else {
                 break;
             }
@@ -390,6 +391,24 @@ public class CleanSweepController {
         return true;
     }
 
-    ;
+    public void cleanTiles() {
+        for(FloorTile floorTile:floorMap.getFloorMap().values()) {
+            if(floorTile.getUnitsOfDirt() == 0) {
+                System.out.printf("Tile at Point %s is clean %n",floorTile.getLocation());
+            }
+            while(floorTile.getUnitsOfDirt() > 0) {
+                floorTile.removeDirt();
+                System.out.printf("Cleaning tile at Point (%d, %d) %n",floorTile.getLocation().getX(),floorTile.getLocation().getY());
+            }
+        }
+
+        /*
+        FloorTile floorTile = getCurrentFloorTile();
+        while(floorTile.getUnitsOfDirt() > 0) {
+            floorTile.removeDirt();
+            System.out.printf("Cleaning tile at Point (%d, %d) %n",floorTile.getLocation().getX(),floorTile.getLocation().getY());
+        }
+         */
+    }
 
 }

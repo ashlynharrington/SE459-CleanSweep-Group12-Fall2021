@@ -95,5 +95,4 @@ public class FloorTile {
                 "\n  unitsOfDirt: " + unitsOfDirt +
                 "\n";
     }
-
 }

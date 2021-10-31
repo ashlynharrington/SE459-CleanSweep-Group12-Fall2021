@@ -59,8 +59,10 @@ public class FloorReader {
             }
 
             CleanSweepController cleanSweepController = new CleanSweepController(floorMap);
-            cleanSweepController.startCleaningCycle();
+            //cleanSweepController.startCleaningCycle();
 
+            cleanSweepController.cleanTiles();
+            floorMap.getFloorTileAt(0,0);
 
 
         } catch (IOException e) {
