@@ -396,10 +396,6 @@ public class CleanSweepController {
     }
 
 
-    private void fullyCleaned(){
-
-    }
-
 
 
 }
