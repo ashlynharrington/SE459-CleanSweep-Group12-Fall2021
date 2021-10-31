@@ -4,7 +4,7 @@
             "x": "0",
             "y": "0",
             "floorType": "LOWCARPET",
-            "unitsOfDirt": 22
+            "unitsOfDirt": 5
         }
     },
     {
@@ -144,7 +144,7 @@
             "x": "3",
             "y": "2",
             "floorType": "HIGHCARPET",
-            "unitsOfDirt": 12
+            "unitsOfDirt": 5
         }
     },
     {

@@ -173,8 +173,7 @@ public class CleanSweepController {
         while (checkBattery() && (getCurrentVacuumDirt() < MAX_DIRT_CAPACITY)) {
 
             if (tryToMove()) {
-                //tryToClean();
-                cleanTiles();
+                tryToClean();
             } else {
                 break;
             }
@@ -361,7 +360,7 @@ public class CleanSweepController {
         FloorTile floorTile = getCurrentFloorTile();
 
         // if current dirt is less than max dirt and the tile is dirty, remove dirt
-        if (currentVacuumDirt < MAX_DIRT_CAPACITY && floorTile.isDirty()) {
+        while (currentVacuumDirt < MAX_DIRT_CAPACITY && floorTile.isDirty()) {
             floorTile.removeDirt();
             currentVacuumDirt += 1;
             System.out.println("   Tile dirty, dirt added.");
@@ -372,11 +371,10 @@ public class CleanSweepController {
             if (!reduceChargeOnClean(floorTile.getType())) {
                 return false;
             }
-
-            return true;
         }
+
         // if current dirt is less than max dirt and the tile is not dirty, do not remove dirt
-        else if (currentVacuumDirt < MAX_DIRT_CAPACITY && !floorTile.isDirty()) {
+        if (currentVacuumDirt < MAX_DIRT_CAPACITY && !floorTile.isDirty()) {
             System.out.println("   Tile not dirty, no dirt added.");
             System.out.println("   Current vacuum dirt level: " + currentVacuumDirt);
             return false;
@@ -387,28 +385,9 @@ public class CleanSweepController {
             System.out.println("   Vacuum full. No longer cleaning.");
             return false;
         }
-        ;
+
         return true;
     }
 
-    public void cleanTiles() {
-        for(FloorTile floorTile:floorMap.getFloorMap().values()) {
-            if(floorTile.getUnitsOfDirt() == 0) {
-                System.out.printf("Tile at Point %s is clean %n",floorTile.getLocation());
-            }
-            while(floorTile.getUnitsOfDirt() > 0) {
-                floorTile.removeDirt();
-                System.out.printf("Cleaning tile at Point (%d, %d) %n",floorTile.getLocation().getX(),floorTile.getLocation().getY());
-            }
-        }
-
-        /*
-        FloorTile floorTile = getCurrentFloorTile();
-        while(floorTile.getUnitsOfDirt() > 0) {
-            floorTile.removeDirt();
-            System.out.printf("Cleaning tile at Point (%d, %d) %n",floorTile.getLocation().getX(),floorTile.getLocation().getY());
-        }
-         */
-    }
 
 }
