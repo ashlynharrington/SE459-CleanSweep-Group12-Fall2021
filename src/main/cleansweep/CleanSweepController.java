@@ -64,10 +64,8 @@ public class CleanSweepController {
 
         if(isLowBattery()){
 
-
             Point currentPoint = new Point(cleanSweepCommands.getCurrentX(),cleanSweepCommands.getCurrentY());
             Point chargingStation = getChargingStation();
-
 
             if(currentPoint.equals(chargingStation)){
                 //Already on charging station
