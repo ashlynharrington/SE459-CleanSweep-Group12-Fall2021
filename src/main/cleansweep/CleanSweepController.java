@@ -366,7 +366,7 @@ public class CleanSweepController {
         FloorTile floorTile = getCurrentFloorTile();
 
         // if current dirt is less than max dirt and the tile is dirty, remove dirt
-        if (currentVacuumDirt < MAX_DIRT_CAPACITY && floorTile.isDirty()) {
+        while (currentVacuumDirt < MAX_DIRT_CAPACITY && floorTile.isDirty()) {
             floorTile.removeDirt();
             currentVacuumDirt += 1;
             System.out.println("   Tile dirty, dirt added.");
@@ -377,11 +377,10 @@ public class CleanSweepController {
             if (!reduceChargeOnClean(floorTile.getType())) {
                 return false;
             }
-
-            return true;
         }
+
         // if current dirt is less than max dirt and the tile is not dirty, do not remove dirt
-        else if (currentVacuumDirt < MAX_DIRT_CAPACITY && !floorTile.isDirty()) {
+        if (currentVacuumDirt < MAX_DIRT_CAPACITY && !floorTile.isDirty()) {
             System.out.println("   Tile not dirty, no dirt added.");
             System.out.println("   Current vacuum dirt level: " + currentVacuumDirt);
             return false;
@@ -392,11 +391,10 @@ public class CleanSweepController {
             System.out.println("   Vacuum full. No longer cleaning.");
             return false;
         }
-        ;
+
         return true;
     }
 
-    ;
 
     private void fullyCleaned(){
 
