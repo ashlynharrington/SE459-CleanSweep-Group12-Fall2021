@@ -70,6 +70,7 @@ public class CleanSweepController {
                 tryToChargeBattery();
 
             }else {
+                System.out.println("Returning to charging station");
                 if (null == chargingStation) {
                     //Should not happen if there is a charging station
                     System.out.println("Could not find a charging station.  Run until battery dead.");
