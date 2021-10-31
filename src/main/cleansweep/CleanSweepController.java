@@ -63,19 +63,26 @@ public class CleanSweepController {
         Point move = null;
 
         if(isLowBattery()){
+            Point currentPoint = new Point(cleanSweepCommands.getCurrentX(),cleanSweepCommands.getCurrentY());
             Point chargingStation = getChargingStation();
-            if(null == chargingStation){
-                //Should not happen if there is a charging station
-                System.out.println("Could not find a charging station.  Run until battery dead.");
-            }else{
-                PathFinder chargePathFinder = new PathFinder(
-                        new Point(cleanSweepCommands.getCurrentX(),cleanSweepCommands.getCurrentY()),
-                        chargingStation,
-                        floorMap
-                );
-                Path chargePath = chargePathFinder.findPath();
-                chargePath.printPath();
-                return chargePath.getNextMove();
+            if(currentPoint.equals(chargingStation)){
+                //Already on charging station
+                tryToChargeBattery();
+
+            }else {
+                if (null == chargingStation) {
+                    //Should not happen if there is a charging station
+                    System.out.println("Could not find a charging station.  Run until battery dead.");
+                } else {
+                    PathFinder chargePathFinder = new PathFinder(
+                            new Point(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY()),
+                            chargingStation,
+                            floorMap
+                    );
+                    Path chargePath = chargePathFinder.findPath();
+                    chargePath.printPath();
+                    return chargePath.getNextMove();
+                }
             }
         }
 
