@@ -21,6 +21,8 @@ public class CleanSweepController {
     //list to hold coordinates when CleanSweep observes tiles around it
     //coordinates of unvisited tiles are saved at the point the CleanSweep "sees" them
     private final Set<Point> sensedUnvisitedPoints;
+    private final Set<Point> visitedPoints;
+
 
     public int currentVacuumDirt = 0;
     private double unitsOfCharge = 20.0;
@@ -29,6 +31,7 @@ public class CleanSweepController {
         cleanSweepCommands = new CleanSweepStateManager(1, 1);
         floorMap = floorPlan;
         sensedUnvisitedPoints = new HashSet<>();
+        visitedPoints = new HashSet<>();
     }
 
 
@@ -63,6 +66,7 @@ public class CleanSweepController {
         Point move = null;
 
         if(isLowBattery()){
+
             Point currentPoint = new Point(cleanSweepCommands.getCurrentX(),cleanSweepCommands.getCurrentY());
             Point chargingStation = getChargingStation();
 
@@ -71,7 +75,9 @@ public class CleanSweepController {
                 tryToChargeBattery();
 
             }else {
+
                 System.out.println("Returning to charging station");
+
                 if (null == chargingStation) {
                     //Should not happen if there is a charging station
                     System.out.println("Could not find a charging station.  Run until battery dead.");
@@ -87,6 +93,7 @@ public class CleanSweepController {
                 }
             }
         }
+
 
         //if only one move is available, move there
         if (potentialMoves.size() == 1) {
@@ -148,7 +155,10 @@ public class CleanSweepController {
         for (Point point : sensedUnvisitedPoints) {
             if (point.equals(p)) {
                 sensedUnvisitedPoints.remove(point);
+                visitedPoints.add(point);
                 System.out.println("   Removed Point from unvisited list: " + point.toString());
+                System.out.println("   Added Point to visited list: " + point.toString());
+                System.out.println("   Tiles visited: " + visitedPoints);
                 break;
             }
         }
@@ -176,6 +186,7 @@ public class CleanSweepController {
             if (cleanSweepCommands.move(nextMove)) {
                 floorMap.getFloorTileAt(nextMove).setVisited();
                 removePointFromUnvisitedList(nextMove);
+
 
                 return true;
             }
@@ -433,6 +444,7 @@ public class CleanSweepController {
     private boolean isLowBattery(){
         return unitsOfCharge<=LOW_BATTERY_THRESHOLD;
     }
+
 
 
 }
