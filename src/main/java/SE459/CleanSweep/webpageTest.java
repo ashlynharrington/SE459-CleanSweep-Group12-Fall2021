@@ -6,9 +6,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class webpageTest {
 
+    /*
     @RequestMapping("/")
     public String testHello() {
         return "Hello";
     }
+
+     */
 
 }

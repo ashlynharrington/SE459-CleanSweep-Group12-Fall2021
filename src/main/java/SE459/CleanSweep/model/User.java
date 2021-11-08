@@ -1,7 +1,6 @@
 package SE459.CleanSweep.model;
 
-
-
+import org.springframework.context.annotation.Bean;
 
 public class User {
 
