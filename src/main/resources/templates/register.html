@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="ISO-8859-1">
     <title>User Registration</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
+
 <body>
 <div align="center">
     <h1>User Registration</h1>
-    <form action="#" th:action="@{/addUser}" method="post" th:object="${user}">
+    <form th:action="@{/register}" th:object="${user}" method="post">
         <label>First name:</label>
         <input type="text" th:field="*{firstName}" /><br/>
 
@@ -20,9 +23,10 @@
         <label>Password:</label>
         <input type="password" th:field="*{password}" /><br/>
 
+        <!--
         <label>Clean Sweep ID:</label>
         <input type="text" th:field="*{cleanSweepID}" /><br/>
-
+        -->
         <button class="button" type="submit">Register</button>
     </form>
 </div>

@@ -5,11 +5,12 @@
 <head>
     <meta charset="ISO-8859-1">
     <title>CleanSweep</title>
+    <link href="../static/css/style.css" th:href="@{/static/css/style.css}" rel="stylesheet" />
 </head>
 <body>
 <div align="center">
     <h1>Spring Boot Form Demo</h1>
-    <a href="/register" class="button">Click here to register</a>
+    <a th:href="@{/register}">Click here to register</a>
     <p>Welcome to the clean sweep portal page</p>
 </div>
 </body>
