@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -17,9 +18,29 @@ public class FloorReader {
     public static void main(String[] args) {
 
 
+        FloorTileSet floorMap = readFloorMap();
+
+        try {
+            CleanSweepController cleanSweepController = new CleanSweepController(floorMap);
+            cleanSweepController.startCleaningCycle();
+
+
+            floorMap.getFloorTileAt(0, 0);
+
+            for (FloorTile floorTile : floorMap.getFloorMap().values()) {
+                System.out.println(floorMap.getFloorTileAt(floorTile.getLocation().getX(), floorTile.getLocation().getY()));
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public static FloorTileSet readFloorMap() {
         FloorTileSet floorMap = new FloorTileSet();
 
-        try(FileReader reader = new FileReader("FloorPlan.json")) {
+        try (FileReader reader = new FileReader("FloorPlan.json")) {
             System.out.println("File was found");
             Object obj = JsonParser.parseReader(reader);
 
@@ -30,7 +51,7 @@ public class FloorReader {
             JsonObject floorObject = (JsonObject) floorPlanArray.get(1);
             System.out.println(floorObject);
 
-            for (JsonElement element:floorPlanArray) {
+            for (JsonElement element : floorPlanArray) {
                 System.out.println(element.getAsJsonObject().get("floor"));
 
                 JsonObject floor = (JsonObject) element.getAsJsonObject().get("floor");
@@ -43,11 +64,11 @@ public class FloorReader {
 
                 int unitsOfDirt = floor.get("unitsOfDirt").getAsInt();
 
-                if(floor.get("isChargingStation") != null) {
-                    FloorTile floorTileWithStation = new FloorTile(xCoordinate,yCoordinate, FloorTileType.valueOf(floorType), unitsOfDirt,true);
+                if (floor.get("isChargingStation") != null) {
+                    FloorTile floorTileWithStation = new FloorTile(xCoordinate, yCoordinate, FloorTileType.valueOf(floorType), unitsOfDirt, true);
                     floorMap.addFloorCell(floorTileWithStation);
                 } else if (floor.get("obstacle") != null) {
-                    FloorTile floorTileWithObstacle =  new FloorTile(xCoordinate,yCoordinate,FloorTileType.valueOf(floorType),true,unitsOfDirt);
+                    FloorTile floorTileWithObstacle = new FloorTile(xCoordinate, yCoordinate, FloorTileType.valueOf(floorType), true, unitsOfDirt);
                     floorMap.addFloorCell(floorTileWithObstacle);
                 } else {
 
@@ -57,22 +78,9 @@ public class FloorReader {
 
             }
 
-            CleanSweepController cleanSweepController = new CleanSweepController(floorMap);
-            cleanSweepController.startCleaningCycle();
-
-
-            floorMap.getFloorTileAt(0,0);
-
-            for(FloorTile floorTile: floorMap.getFloorMap().values()) {
-                System.out.println(floorMap.getFloorTileAt(floorTile.getLocation().getX(),floorTile.getLocation().getY()));
-            }
-
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
+        return floorMap;
     }
-
-
-
-
 }
