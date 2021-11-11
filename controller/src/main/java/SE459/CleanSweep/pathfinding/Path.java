@@ -1,7 +1,7 @@
 package SE459.CleanSweep.pathfinding;
 
 
-import SE459.CleanSweep.tiles.Point;
+import SE459.CleanSweep.tiles.SimulatorPoint;
 
 public class Path {
     Node startingPoint;
@@ -18,7 +18,7 @@ public class Path {
             iterator = iterator.parent;
         }
     }
-    public Point getNextMove(){
+    public SimulatorPoint getNextMove(){
         Node nextMove;
         if(iterator == null){
             System.out.println("Already iterated through path.  Returning starting point");

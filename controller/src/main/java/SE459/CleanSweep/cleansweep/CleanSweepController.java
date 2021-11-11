@@ -5,7 +5,7 @@ import SE459.CleanSweep.pathfinding.PathFinder;
 import SE459.CleanSweep.tiles.FloorTile;
 import SE459.CleanSweep.tiles.FloorTileSet;
 import SE459.CleanSweep.tiles.FloorTileType;
-import SE459.CleanSweep.tiles.Point;
+import SE459.CleanSweep.tiles.SimulatorPoint;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,8 +22,8 @@ public class CleanSweepController {
 
     //list to hold coordinates when CleanSweep observes tiles around it
     //coordinates of unvisited tiles are saved at the point the CleanSweep "sees" them
-    private final Set<Point> sensedUnvisitedPoints;
-    private final Set<Point> visitedPoints;
+    private final Set<SimulatorPoint> sensedUnvisitedPoints;
+    private final Set<SimulatorPoint> visitedPoints;
 
     public int currentVacuumDirt = 0;
     private double unitsOfCharge = 20.0;
@@ -36,16 +36,16 @@ public class CleanSweepController {
     }
 
 
-    private ArrayList<Point> senseAdjacentTiles() {
-        ArrayList<Point> potentialMoves = new ArrayList<>();
+    private ArrayList<SimulatorPoint> senseAdjacentTiles() {
+        ArrayList<SimulatorPoint> potentialMoves = new ArrayList<>();
 
         int currentY = cleanSweepCommands.getCurrentY();
         int currentX = cleanSweepCommands.getCurrentX();
 
-        Point up = new Point(currentX, currentY + 1);
-        Point down = new Point(currentX, currentY - 1);
-        Point right = new Point(currentX + 1, currentY);
-        Point left = new Point(currentX - 1, currentY);
+        SimulatorPoint up = new SimulatorPoint(currentX, currentY + 1);
+        SimulatorPoint down = new SimulatorPoint(currentX, currentY - 1);
+        SimulatorPoint right = new SimulatorPoint(currentX + 1, currentY);
+        SimulatorPoint left = new SimulatorPoint(currentX - 1, currentY);
 
         //potential moves are any adjacent tiles that are not obstacles or not null
         //If a tile is visited the CleanSweep could still move there
@@ -63,13 +63,13 @@ public class CleanSweepController {
         return potentialMoves;
     }
 
-    private Point pickPointToMoveTo(ArrayList<SE459.CleanSweep.tiles.Point> potentialMoves) {
-        Point move = null;
+    private SimulatorPoint pickPointToMoveTo(ArrayList<SimulatorPoint> potentialMoves) {
+        SimulatorPoint move = null;
 
         if(isLowBattery()){
 
-            Point currentPoint = new Point(cleanSweepCommands.getCurrentX(),cleanSweepCommands.getCurrentY());
-            Point chargingStation = getChargingStation();
+            SimulatorPoint currentPoint = new SimulatorPoint(cleanSweepCommands.getCurrentX(),cleanSweepCommands.getCurrentY());
+            SimulatorPoint chargingStation = getChargingStation();
 
             if(currentPoint.equals(chargingStation)){
                 //Already on charging station
@@ -84,7 +84,7 @@ public class CleanSweepController {
                     System.out.println("Could not find a charging station.  Run until battery dead.");
                 } else {
                     PathFinder chargePathFinder = new PathFinder(
-                            new Point(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY()),
+                            new SimulatorPoint(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY()),
                             chargingStation,
                             floorMap
                     );
@@ -103,9 +103,9 @@ public class CleanSweepController {
         }
 
         //try to move to an unvisited tile first
-        for (Point p : potentialMoves) {
+        for (SimulatorPoint p : potentialMoves) {
             if (!floorMap.getFloorTileAt(p).isVisited()) {
-                move = new Point(p.getX(), p.getY());
+                move = new SimulatorPoint(p.getX(), p.getY());
                 break;
             }
         }
@@ -130,16 +130,16 @@ public class CleanSweepController {
 
         //Need to address if obstacle between CleanSweep and unvisited tile
         if (move == null) {
-            Point sensedButUnvisitedPoint = null;
+            SimulatorPoint sensedButUnvisitedPoint = null;
             Object[] arrayOfUnvisited = sensedUnvisitedPoints.toArray();
             if(arrayOfUnvisited.length == 0){
                 System.out.println("Visited everywhere");
-                move = new Point(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY());
+                move = new SimulatorPoint(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY());
             }else {
-               sensedButUnvisitedPoint  = (Point)arrayOfUnvisited[0];
+               sensedButUnvisitedPoint  = (SimulatorPoint)arrayOfUnvisited[0];
             }
             PathFinder pf = new PathFinder(
-                    new Point(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY()),
+                    new SimulatorPoint(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY()),
                     sensedButUnvisitedPoint,
                     floorMap);
             heuristic = pf.findPath();
@@ -152,13 +152,13 @@ public class CleanSweepController {
         return move;
     }
 
-    private void removePointFromUnvisitedList(Point p) {
-        for (Point point : sensedUnvisitedPoints) {
-            if (point.equals(p)) {
-                sensedUnvisitedPoints.remove(point);
-                visitedPoints.add(point);
-                System.out.println("   Removed Point from unvisited list: " + point.toString());
-                System.out.println("   Added Point to visited list: " + point.toString());
+    private void removePointFromUnvisitedList(SimulatorPoint p) {
+        for (SimulatorPoint simulatorPoint : sensedUnvisitedPoints) {
+            if (simulatorPoint.equals(p)) {
+                sensedUnvisitedPoints.remove(simulatorPoint);
+                visitedPoints.add(simulatorPoint);
+                System.out.println("   Removed Point from unvisited list: " + simulatorPoint.toString());
+                System.out.println("   Added Point to visited list: " + simulatorPoint.toString());
                 System.out.println("   Tiles visited: " + visitedPoints);
                 break;
             }
@@ -168,7 +168,7 @@ public class CleanSweepController {
 
     private boolean tryToMove() {
         //first the CleanSweep looks around at adjacent tiles for potential moves
-        ArrayList<SE459.CleanSweep.tiles.Point> potentialMoves = senseAdjacentTiles();
+        ArrayList<SimulatorPoint> potentialMoves = senseAdjacentTiles();
 
         //if no potential moves, CleanSweep is stuck
         if (potentialMoves.size() == 0) {
@@ -177,7 +177,7 @@ public class CleanSweepController {
         }
 
         //
-        Point nextMove = pickPointToMoveTo(potentialMoves);
+        SimulatorPoint nextMove = pickPointToMoveTo(potentialMoves);
 
         FloorTileType currentFloorTileType = getCurrentFloorTile().getType();
         FloorTileType nextFloorTileType = floorMap.getFloorTileAt(nextMove).getType();
@@ -335,11 +335,11 @@ public class CleanSweepController {
 
     }
 
-    private boolean isWallOrObstacle(Point p) {
+    private boolean isWallOrObstacle(SimulatorPoint p) {
         return (null == floorMap.getFloorTileAt(p) || floorMap.getFloorTileAt(p).isObstacle());
     }
 
-    private boolean isVisited(Point p) {
+    private boolean isVisited(SimulatorPoint p) {
         return (null != floorMap.getFloorTileAt(p) && floorMap.getFloorTileAt(p).isVisited());
     }
 
@@ -429,12 +429,12 @@ public class CleanSweepController {
     }
 
 
-    private Point getChargingStation(){
+    private SimulatorPoint getChargingStation(){
         return randomChargingStation();
     }
-    private Point randomChargingStation(){
-        Set<Point> pointsToScan = floorMap.getFloorMap().keySet();
-        for(Point p: pointsToScan){
+    private SimulatorPoint randomChargingStation(){
+        Set<SimulatorPoint> pointsToScan = floorMap.getFloorMap().keySet();
+        for(SimulatorPoint p: pointsToScan){
             if(floorMap.getFloorTileAt(p).isChargingStation()){
                 return p;
             }

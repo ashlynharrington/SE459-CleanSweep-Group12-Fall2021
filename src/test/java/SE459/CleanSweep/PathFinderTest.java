@@ -5,7 +5,7 @@ import SE459.CleanSweep.pathfinding.PathFinder;
 import SE459.CleanSweep.tiles.FloorTile;
 import SE459.CleanSweep.tiles.FloorTileSet;
 import SE459.CleanSweep.tiles.FloorTileType;
-import SE459.CleanSweep.tiles.Point;
+import SE459.CleanSweep.tiles.SimulatorPoint;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -58,7 +58,7 @@ public class PathFinderTest {
 
             }
 
-            PathFinder pf = new PathFinder(new Point(0,0), new Point(3,0), floorMap);
+            PathFinder pf = new PathFinder(new SimulatorPoint(0,0), new SimulatorPoint(3,0), floorMap);
             Path p = pf.findPath();
             p.printPath();
 

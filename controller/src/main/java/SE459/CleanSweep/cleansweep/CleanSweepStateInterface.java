@@ -1,5 +1,5 @@
 package SE459.CleanSweep.cleansweep;
-import SE459.CleanSweep.tiles.Point;
+import SE459.CleanSweep.tiles.SimulatorPoint;
 
 
 /**
@@ -10,7 +10,7 @@ import SE459.CleanSweep.tiles.Point;
 //Also meant to document all the current ways that the Clean Sweep state can change.
 
 public interface CleanSweepStateInterface {
-    boolean move(Point point);
+    boolean move(SimulatorPoint simulatorPoint);
     void moveUp();
     void moveDown();
     void moveRight();

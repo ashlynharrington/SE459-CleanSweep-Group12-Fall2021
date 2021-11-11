@@ -1,23 +1,22 @@
 package SE459.CleanSweep.pathfinding;
 
-
-import SE459.CleanSweep.tiles.Point;
+import SE459.CleanSweep.tiles.SimulatorPoint;
 
 public class Node implements Comparable<Node>{
-    Point coordinates;
+    SimulatorPoint coordinates;
     Node parent;
     int estimateDistance = 0;
 
-    public Node(Point c, Node p){
+    public Node(SimulatorPoint c, Node p){
         coordinates = c;
         parent = p;
     }
 
-    private int getHeuristicMeasure(Point other){
+    private int getHeuristicMeasure(SimulatorPoint other){
         return Math.abs(other.getX()-coordinates.getX())+ Math.abs(other.getY()- coordinates.getY());
     }
 
-    public int getEstimatedDistanceTo(Point other){
+    public int getEstimatedDistanceTo(SimulatorPoint other){
         estimateDistance = getHeuristicMeasure(other)+getDistanceFromStart();
         return estimateDistance;
     }
@@ -30,7 +29,7 @@ public class Node implements Comparable<Node>{
         }
     }
 
-    public Point getCoordinates() {
+    public SimulatorPoint getCoordinates() {
         return coordinates;
     }
 

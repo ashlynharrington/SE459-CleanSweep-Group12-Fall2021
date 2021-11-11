@@ -16,12 +16,12 @@ public class FloorTile {
     private boolean visited;
     private boolean chargingStation;
     private int unitsOfDirt;
-    private final Point location;
+    private final SimulatorPoint location;
     private boolean obstacle;
 
     //constructors
     public FloorTile(int x, int y, FloorTileType type, int unitsOfDirt){
-        this.location = new Point(x, y);
+        this.location = new SimulatorPoint(x, y);
         this.type = type;
         this.unitsOfDirt = unitsOfDirt;
         this.chargingStation = false;
@@ -30,7 +30,7 @@ public class FloorTile {
     }
 
     public FloorTile(int x, int y, FloorTileType type,boolean obstacle,int unitsOfDirt){
-        this.location = new Point(x, y);
+        this.location = new SimulatorPoint(x, y);
         this.type = type;
         this.unitsOfDirt = unitsOfDirt;
         this.chargingStation = false;
@@ -40,7 +40,7 @@ public class FloorTile {
 
     //keep this second constructor?
     public FloorTile(int x, int y, FloorTileType type, int unitsOfDirt, boolean chargingStation){
-        this.location = new Point(x, y);
+        this.location = new SimulatorPoint(x, y);
         this.type = type;
         this.unitsOfDirt = unitsOfDirt;
         this.chargingStation = chargingStation;
@@ -48,7 +48,7 @@ public class FloorTile {
     }
 
     //getters
-    public Point getLocation(){
+    public SimulatorPoint getLocation(){
         return location;
     }
 

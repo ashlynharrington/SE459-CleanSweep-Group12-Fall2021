@@ -1,3 +1,4 @@
+package SE459.CleanSweep;
 
 import SE459.CleanSweep.cleansweep.CleanSweepController;
 import SE459.CleanSweep.tiles.FloorTile;
@@ -8,15 +9,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-
-import javax.persistence.criteria.CriteriaBuilder;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class FloorReader {
+public class Simulator {
 
     public static void main(String[] args) {
-
 
         FloorTileSet floorMap = readFloorMap();
 
@@ -24,12 +22,12 @@ public class FloorReader {
             CleanSweepController cleanSweepController = new CleanSweepController(floorMap);
             cleanSweepController.startCleaningCycle();
 
-
             floorMap.getFloorTileAt(0, 0);
 
             for (FloorTile floorTile : floorMap.getFloorMap().values()) {
                 System.out.println(floorMap.getFloorTileAt(floorTile.getLocation().getX(), floorTile.getLocation().getY()));
             }
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -40,7 +38,7 @@ public class FloorReader {
     public static FloorTileSet readFloorMap() {
         FloorTileSet floorMap = new FloorTileSet();
 
-        try (FileReader reader = new FileReader("FloorPlan.json")) {
+        try (FileReader reader = new FileReader("simulator/FloorPlan.json")) {
             System.out.println("File was found");
             Object obj = JsonParser.parseReader(reader);
 

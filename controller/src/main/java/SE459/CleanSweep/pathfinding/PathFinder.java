@@ -2,21 +2,21 @@ package SE459.CleanSweep.pathfinding;
 
 
 import SE459.CleanSweep.tiles.FloorTileSet;
-import SE459.CleanSweep.tiles.Point;
+import SE459.CleanSweep.tiles.SimulatorPoint;
 
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
 public class PathFinder {
-    Point start;
-    Point end;
+    SimulatorPoint start;
+    SimulatorPoint end;
     PriorityQueue<Node> nodes = new PriorityQueue<Node>();
     ArrayList<Node> finishedNodes = new ArrayList<Node>();
     ArrayList<Node> openNodes = new ArrayList<Node>();
 
     FloorTileSet floor;
 
-    public PathFinder(Point s, Point e, FloorTileSet floorMap){
+    public PathFinder(SimulatorPoint s, SimulatorPoint e, FloorTileSet floorMap){
         start = s;
         end = e;
         floor = floorMap;
@@ -59,7 +59,7 @@ public class PathFinder {
     }
 
     private void exploreLeft(Node bestNode) {
-        Point p = bestNode.getCoordinates();
+        SimulatorPoint p = bestNode.getCoordinates();
         int x = p.getX()-1;
         int y = p.getY();
 
@@ -67,7 +67,7 @@ public class PathFinder {
     }
 
     private void exploreRight(Node bestNode) {
-        Point p = bestNode.getCoordinates();
+        SimulatorPoint p = bestNode.getCoordinates();
         int x = p.getX()+1;
         int y = p.getY();
 
@@ -75,7 +75,7 @@ public class PathFinder {
     }
 
     private void exploreUp(Node bestNode) {
-        Point p = bestNode.getCoordinates();
+        SimulatorPoint p = bestNode.getCoordinates();
         int x = p.getX();
         int y = p.getY()+1;
 
@@ -83,7 +83,7 @@ public class PathFinder {
     }
 
     private void exploreDown(Node bestNode) {
-        Point p = bestNode.getCoordinates();
+        SimulatorPoint p = bestNode.getCoordinates();
         int x = p.getX();
         int y = p.getY()-1;
 
@@ -93,7 +93,7 @@ public class PathFinder {
     private void addNode(int x, int y, Node bestNode){
         if(null != floor.getFloorTileAt(x,y) && (!floor.getFloorTileAt(x,y).isObstacle()) && (!finished(x,y))){
             Node neighborNode;
-            neighborNode = new Node(new Point(x,y),bestNode);
+            neighborNode = new Node(new SimulatorPoint(x,y),bestNode);
             if(isOptimal(neighborNode)) {
                 neighborNode.getEstimatedDistanceTo(end);
                 nodes.add(neighborNode);
@@ -117,7 +117,7 @@ public class PathFinder {
 
     private boolean finished(int x, int y) {
         for(Node n: finishedNodes){
-            Point p = n.getCoordinates();
+            SimulatorPoint p = n.getCoordinates();
             if(x==p.getX() && y==p.getY()){
                 return true;
             }

@@ -1,11 +1,11 @@
 package SE459.CleanSweep.tiles;
 
-public class Point {
+public class SimulatorPoint {
 
     private final int x;
     private final int y;
 
-    public Point(int x, int y){
+    public SimulatorPoint(int x, int y){
         this.x = x;
         this.y = y;
     }
@@ -22,7 +22,7 @@ public class Point {
         return String.format("(%d, %d)", x, y);
     }
 
-    public double distanceToPoint(Point other){
+    public double distanceToPoint(SimulatorPoint other){
         double distance = Math.sqrt(Math.pow((this.getX()-other.getX()), 2) + Math.pow((this.getY()- other.getY()), 2));
         return distance;
     }
@@ -31,7 +31,7 @@ public class Point {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof Point key)) return false;
+        if (!(obj instanceof SimulatorPoint key)) return false;
         return x == key.x && y == key.y;
     }
 

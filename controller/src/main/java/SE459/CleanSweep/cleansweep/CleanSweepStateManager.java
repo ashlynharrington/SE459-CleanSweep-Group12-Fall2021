@@ -1,6 +1,6 @@
 package SE459.CleanSweep.cleansweep;
 
-import SE459.CleanSweep.tiles.Point;
+import SE459.CleanSweep.tiles.SimulatorPoint;
 
 public class CleanSweepStateManager implements CleanSweepStateInterface {
     private int currentX;
@@ -30,7 +30,7 @@ public class CleanSweepStateManager implements CleanSweepStateInterface {
         currentX-=1;
     }
 
-    public boolean move(Point p){
+    public boolean move(SimulatorPoint p){
         int dx = Math.abs(Math.abs(currentX) - Math.abs(p.getX()));
         int dy = Math.abs(Math.abs(currentY) - Math.abs(p.getY()));
 
