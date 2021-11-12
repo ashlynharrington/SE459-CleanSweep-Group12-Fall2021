@@ -1,13 +1,13 @@
-package SE459.CleanSweep;
+package SE459.CleanSweep.webapp.controller;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CleanSweepApplication {
+public class MainController {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CleanSweepApplication.class, args);
+		SpringApplication.run(MainController.class, args);
 	}
 
 }

@@ -1,0 +1,29 @@
+.container-xxl {
+    height: 100%;
+    border-style: none;
+}
+
+.button {
+    margin-top: 10px;
+    border: none;
+    padding: 10px 16px;
+    background-color:  #40474E;
+    color: white;
+    font-size: 16px;
+}
+
+.button:hover {
+    background-color: #4CAF50;
+}
+
+label {
+    display: inline-block;
+    width: 200px;
+    margin: 5px;
+    text-align: left;
+}
+
+input[type=text], input[type=password], select {
+    display: inline-block;
+    width: 200px;
+}
