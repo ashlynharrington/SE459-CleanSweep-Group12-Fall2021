@@ -14,6 +14,18 @@
         <span th:text="${user.firstName}"></span>
     </h1>
 
+    <p>Hello <span th:text="${user.firstName}"></span>. Below is your floor plan.</p>
+    <table>
+        <tr th:each="entry : ${floorTileMap}">
+            <td th:text="${entry.key}"> </td>
+            <td th:text="${entry.value.getUnitsOfDirt()}"></td>
+            <td th:text="${entry.value.getType()}" ></td>
+            <td th:text="${entry.value.isDirty()}"></td>
+        </tr>
+    </table>
+
+
 </div>
+
 </body>
 </html>

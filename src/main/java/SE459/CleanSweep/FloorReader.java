@@ -1,3 +1,4 @@
+package SE459.CleanSweep;
 
 import SE459.CleanSweep.cleansweep.CleanSweepController;
 import SE459.CleanSweep.tiles.FloorTile;
@@ -25,8 +26,7 @@ public class FloorReader {
             cleanSweepController.startCleaningCycle();
 
 
-            floorMap.getFloorTileAt(0, 0);
-
+            System.out.println("Looping floorTile");
             for (FloorTile floorTile : floorMap.getFloorMap().values()) {
                 System.out.println(floorMap.getFloorTileAt(floorTile.getLocation().getX(), floorTile.getLocation().getY()));
             }
@@ -41,18 +41,13 @@ public class FloorReader {
         FloorTileSet floorMap = new FloorTileSet();
 
         try (FileReader reader = new FileReader("FloorPlan.json")) {
-            System.out.println("File was found");
             Object obj = JsonParser.parseReader(reader);
 
             JsonArray floorPlanArray = (JsonArray) obj;
 
-            System.out.println(floorPlanArray);
-
-            JsonObject floorObject = (JsonObject) floorPlanArray.get(1);
-            System.out.println(floorObject);
 
             for (JsonElement element : floorPlanArray) {
-                System.out.println(element.getAsJsonObject().get("floor"));
+
 
                 JsonObject floor = (JsonObject) element.getAsJsonObject().get("floor");
 
@@ -80,6 +75,7 @@ public class FloorReader {
 
         } catch (IOException e) {
             e.printStackTrace();
+            System.err.println("IOException caught " + e);
         }
         return floorMap;
     }
