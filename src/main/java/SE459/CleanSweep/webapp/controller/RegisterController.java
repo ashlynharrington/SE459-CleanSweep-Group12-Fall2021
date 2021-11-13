@@ -33,6 +33,8 @@ public class RegisterController {
 
             CleanSweepController cleanSweepController = new CleanSweepController(floorTileSet);
             cleanSweepController.startCleaningCycle();
+            cleanSweepController.getCurrentBatteryLevel();
+            model.addAttribute("cleanSweepController", cleanSweepController);
 
             model.addAttribute("floorTileMap", floorTileMap);
 

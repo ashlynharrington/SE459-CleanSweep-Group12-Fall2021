@@ -387,6 +387,11 @@ public class CleanSweepController {
         return currentVacuumDirt;
     }
 
+    @Override
+    public String toString() {
+        return "Current Battery Level = " + unitsOfCharge;
+    }
+
     public FloorTile getCurrentFloorTile() {
         return floorMap.getFloorTileAt(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY());
     }
