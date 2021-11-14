@@ -11,22 +11,23 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
 
 public class Simulator {
 
     public static void main(String[] args) {
-
-
         FloorTileSet floorMap = readFloorMap();
 
         try {
+
             CleanSweepController cleanSweepController = new CleanSweepController(floorMap);
             cleanSweepController.startCleaningCycle();
 
-
-            System.out.println("Looping floorTile");
+            System.out.println("\n\nCompleted Cleaning Cycle!!\n\n");
+            System.out.println("Checking all Floor Tiles:");
             for (FloorTile floorTile : floorMap.getFloorMap().values()) {
                 System.out.println(floorMap.getFloorTileAt(floorTile.getLocation().getX(), floorTile.getLocation().getY()));
             }
@@ -40,7 +41,7 @@ public class Simulator {
     public static FloorTileSet readFloorMap() {
         FloorTileSet floorMap = new FloorTileSet();
 
-        try (FileReader reader = new FileReader("FloorPlan.json")) {
+        try (FileReader reader = new FileReader("FloorPlan2.json")) {
             Object obj = JsonParser.parseReader(reader);
 
             JsonArray floorPlanArray = (JsonArray) obj;

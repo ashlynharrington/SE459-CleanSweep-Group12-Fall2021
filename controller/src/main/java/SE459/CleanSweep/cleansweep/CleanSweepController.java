@@ -7,14 +7,16 @@ import SE459.CleanSweep.tiles.FloorTileSet;
 import SE459.CleanSweep.tiles.FloorTileType;
 import SE459.CleanSweep.tiles.FloorPoint;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 public class CleanSweepController {
     Path heuristic = null;
-    private static final int MAX_BATTERY_CAPACITY = 100;
-    private static final int MAX_DIRT_CAPACITY = 100;
+    private static final int MAX_BATTERY_CAPACITY = 250;
+    private static final int MAX_DIRT_CAPACITY = 50;
     private static final double LOW_BATTERY_THRESHOLD = 30;
 
     private CleanSweepStateInterface cleanSweepCommands;
@@ -25,10 +27,20 @@ public class CleanSweepController {
     private final Set<FloorPoint> sensedUnvisitedPoints;
     private final Set<FloorPoint> visitedPoints;
 
-    public int currentVacuumDirt = 0;
+    private int currentVacuumDirt = 0;
+    private int totalDirtCollected = 0;
+
     private double unitsOfCharge = 20.0;
+    private ByteArrayOutputStream baos;
 
     public CleanSweepController(FloorTileSet floorPlan) {
+        try {
+            baos = new ByteArrayOutputStream();
+            System.setOut(new PrintStream(baos));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         cleanSweepCommands = new CleanSweepStateManager(1, 1);
         floorMap = floorPlan;
         sensedUnvisitedPoints = new HashSet<>();
@@ -111,29 +123,13 @@ public class CleanSweepController {
         }
 
         System.out.println("   Sensed Unvisited Tiles List: " + sensedUnvisitedPoints.toString());
-
         //if no unvisited tiles to move to, try to go toward an unvisited tile
-        //do not go back to the previous tile
 
-        /**
-        if (move == null) {
-            Point mostRecentUnvisitedPointSeen = potentialMoves.get(potentialMoves.size() - 1);
-            double shortestDistance = mostRecentUnvisitedPointSeen.distanceToPoint(new Point(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY()));
-
-            for (Point p : potentialMoves) {
-                if (p.distanceToPoint(mostRecentUnvisitedPointSeen) < shortestDistance) {
-                    move = p;
-                }
-            }
-        }
-         */
-
-        //Need to address if obstacle between CleanSweep and unvisited tile
         if (move == null) {
             FloorPoint sensedButUnvisitedPoint = null;
             Object[] arrayOfUnvisited = sensedUnvisitedPoints.toArray();
             if(arrayOfUnvisited.length == 0){
-                System.out.println("Visited everywhere");
+                System.out.println("\nVisited all visible tiles!!\n");
                 move = new FloorPoint(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY());
             }else {
                sensedButUnvisitedPoint  = (FloorPoint)arrayOfUnvisited[0];
@@ -176,9 +172,7 @@ public class CleanSweepController {
             return false;
         }
 
-        //
         FloorPoint nextMove = pickPointToMoveTo(potentialMoves);
-
         FloorTileType currentFloorTileType = getCurrentFloorTile().getType();
         FloorTileType nextFloorTileType = floorMap.getFloorTileAt(nextMove).getType();
 
@@ -187,7 +181,6 @@ public class CleanSweepController {
             if (cleanSweepCommands.move(nextMove)) {
                 floorMap.getFloorTileAt(nextMove).setVisited();
                 removePointFromUnvisitedList(nextMove);
-
 
                 return true;
             }
@@ -216,124 +209,10 @@ public class CleanSweepController {
             } else {
                 break;
             }
-
         }
-
-//        for(Map.Entry<Point,FloorTile> entry:floorMap.getFloorMap().entrySet()) {
-//            FloorTile floorTile = entry.getValue();
-//            Point point = entry.getValue().getLocation();
-//            System.out.println("Going through Point (" + point.getX() + ", " + point.getY() + ")");
-
-        // eventually should update logic to "isClean" if floorTile.unitsOfDirt = 0 instead of "setVisited"
-        // this will allow the vacuum to "revisit" a tile if it needs more than one pass to clean
-        // right now just checks if the floor tile is dirty, is not an obstacle, and that the dirt isn't full
-//              if(floorTile.isDirty() && !isWallOrObstacle(point.getX(),point.getY()) && !floorTile.isObstacle() && currentDirt < maxDirt) {
-//                    floorTile.setVisited();
-//                    floorTile.removeDirt();
-//                    currentDirt+=1;
-//                    System.out.println("Removing dirt at (" + point.getX() + ", " + point.getY() + ")");
-//                  System.out.println("Current dirt level is: " + currentDirt);
-//            }
-
-//        }
-//
-//        System.out.println("Vacuum has started cleaning");
-
     }
 
     //Return boolean stating if moving up one tile succeeded or failed due to obstacle or wall.
-
-    public boolean tryToMoveUp() {
-        if (!checkBattery()) {
-            return false;
-        }
-
-        if (isWallOrObstacle(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY() + 1)) {
-            return false;
-        }
-        FloorTileType currentFloorTileType = getCurrentFloorTile().getType();
-        FloorTileType nextFloorTileType = floorMap.getFloorTileAt(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY() + 1).getType();
-
-        //if not enough battery left, operation fails, battery dead
-        if (!reduceChargeOnMove(currentFloorTileType, nextFloorTileType)) {
-            return false;
-        }
-
-        System.out.println("   Moving up");
-        cleanSweepCommands.moveUp();
-
-        return true;
-    }
-
-    public boolean tryToMoveDown() {
-        if (!checkBattery()) {
-            return false;
-        }
-
-        if (isWallOrObstacle(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY() - 1)) {
-            return false;
-        }
-        FloorTileType currentFloorTileType = getCurrentFloorTile().getType();
-        FloorTileType nextFloorTileType = floorMap.getFloorTileAt(cleanSweepCommands.getCurrentX(), cleanSweepCommands.getCurrentY() - 1).getType();
-
-        //if not enough battery left, operation fails, battery dead
-        if (!reduceChargeOnMove(currentFloorTileType, nextFloorTileType)) {
-            return false;
-        }
-
-        System.out.println("   Moving down");
-        cleanSweepCommands.moveDown();
-
-        return true;
-    }
-
-    public boolean tryToMoveLeft() {
-        if (!checkBattery()) {
-            return false;
-        }
-
-        if (isWallOrObstacle(cleanSweepCommands.getCurrentX() - 1, cleanSweepCommands.getCurrentY())) {
-            return false;
-        }
-        FloorTileType currentFloorTileType = getCurrentFloorTile().getType();
-        FloorTileType nextFloorTileType = floorMap.getFloorTileAt(cleanSweepCommands.getCurrentX() - 1, cleanSweepCommands.getCurrentY()).getType();
-
-        //if not enough battery left, operation fails, battery dead
-        if (!reduceChargeOnMove(currentFloorTileType, nextFloorTileType)) {
-            return false;
-        }
-
-        System.out.println("   Moving left");
-        cleanSweepCommands.moveLeft();
-
-        return true;
-    }
-
-    public boolean tryToMoveRight() {
-        if (!checkBattery()) {
-            return false;
-        }
-
-        if (isWallOrObstacle(cleanSweepCommands.getCurrentX() + 1, cleanSweepCommands.getCurrentY())) {
-            return false;
-        }
-        FloorTileType currentFloorTileType = getCurrentFloorTile().getType();
-        FloorTileType nextFloorTileType = floorMap.getFloorTileAt(cleanSweepCommands.getCurrentX() + 1, cleanSweepCommands.getCurrentY()).getType();
-
-        if (!reduceChargeOnMove(currentFloorTileType, nextFloorTileType)) {
-            return false;
-        }
-
-        System.out.println("   Moving right");
-        cleanSweepCommands.moveRight();
-
-        return true;
-    }
-
-    private boolean isWallOrObstacle(int x, int y) {
-        return (null == floorMap.getFloorTileAt(x, y) || floorMap.getFloorTileAt(x, y).isObstacle());
-
-    }
 
     private boolean isWallOrObstacle(FloorPoint p) {
         return (null == floorMap.getFloorTileAt(p) || floorMap.getFloorTileAt(p).isObstacle());
@@ -387,6 +266,18 @@ public class CleanSweepController {
         return currentVacuumDirt;
     }
 
+    public int getTotalDirtCollected() {
+        return totalDirtCollected;
+    }
+
+    public Set<FloorPoint> getVisitedPoints() {
+        return visitedPoints;
+    }
+
+    public String getLogs(){
+        return baos.toString();
+    }
+
     @Override
     public String toString() {
         return "Current Battery Level = " + unitsOfCharge;
@@ -407,6 +298,8 @@ public class CleanSweepController {
         while (currentVacuumDirt < MAX_DIRT_CAPACITY && floorTile.isDirty()) {
             floorTile.removeDirt();
             currentVacuumDirt += 1;
+            totalDirtCollected += 1;
+
             System.out.println("   Tile dirty, dirt added.");
             System.out.println("   Current vacuum dirt level: " + currentVacuumDirt);
 

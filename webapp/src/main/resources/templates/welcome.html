@@ -21,11 +21,20 @@
             <td th:text="${entry.key}"> </td>
             <td th:text="${entry.value.getUnitsOfDirt()}"></td>
             <td th:text="${entry.value.getType()}" ></td>
-            <td th:text="${entry.value.isDirty()}"></td>
+            <td th:text="${entry.value.DirtyOrClean()}"></td>
         </tr>
 
     </table>
 
+    <div align="left">
+        <p>History of Cleaning Cycle: </p>
+        <span style="white-space: pre-wrap" th:text="${cleanSweepController.getLogs()}"></span>
+
+        <p>CleanSweep stats after cleaning: </p>
+        <p><span th:text="'Dirt Collected = ' + ${cleanSweepController.getTotalDirtCollected()}"></span></p>
+        <p><span th:text="'Visited Floor Tiles = ' + ${cleanSweepController.getVisitedPoints()}"></span></p>
+
+    </div>
 
 </div>
 
