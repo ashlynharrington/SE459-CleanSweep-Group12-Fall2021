@@ -80,6 +80,13 @@ public class FloorTile {
         return unitsOfDirt != 0;
     }
 
+    public String DirtyOrClean(){
+        if(isDirty()){
+            return "Dirty";
+        } else {
+            return "Clean";
+        }
+    }
     // if there are any units of dirt, decrement units of dirt and return value
     public int removeDirt(){
         if (unitsOfDirt > 0) {unitsOfDirt -= 1;} return unitsOfDirt;
