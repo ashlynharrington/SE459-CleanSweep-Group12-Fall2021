@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Welcome</title>
+</head>
+<body>
+<div align="center">
+
+    <h1>
+        <span>Welcome</span>
+        <span th:text="${user.firstName}"></span>
+    </h1>
+
+    <p>Hello <span th:text="${user.firstName}"></span>. Below is your floor plan.</p>
+    <p><span th:text="${cleanSweepController}"></span></p>
+    <table>
+        <tr th:each="entry : ${floorTileMap}">
+            <td th:text="${entry.key}"> </td>
+            <td th:text="${entry.value.getUnitsOfDirt()}"></td>
+            <td th:text="${entry.value.getType()}" ></td>
+            <td th:text="${entry.value.isDirty()}"></td>
+        </tr>
+
+    </table>
+
+
+</div>
+
+</body>
+</html>
